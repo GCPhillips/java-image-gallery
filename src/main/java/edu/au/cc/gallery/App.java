@@ -4,7 +4,7 @@
 package edu.au.cc.gallery;
 
 public class App {
-    public static void main(String[] args) {
-    	S3.demo();
+    public static void main(String[] args) throws Exception {
+	DB.demo();
     }
 }
