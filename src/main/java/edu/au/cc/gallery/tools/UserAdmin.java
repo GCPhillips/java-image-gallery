@@ -27,4 +27,43 @@ public class UserAdmin {
 
         return value;   
     }
+
+    public static void run() {
+        int value = -1;
+
+        while (value != 5) {
+            value = printMenu();
+            switch(value) {
+                case 1:
+                    listUsers();
+                    break;
+                case 2:
+                    addUser();
+                    break;
+                case 3: 
+                    editUser();
+                    break;
+                case 4:
+                    deleteUser();
+                    break;
+            }
+        }
+    }
+    
+
+    public static void listUsers() {
+
+    }
+
+    public static void addUser() {
+
+    }
+
+    public static void editUser() {
+
+    }
+
+    public static void deleteUser() {
+
+    }
 }
