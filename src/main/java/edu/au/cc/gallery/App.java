@@ -3,8 +3,11 @@
  */
 package edu.au.cc.gallery;
 
+import edu.au.cc.gallery.tools.UserAdmin;
+
 public class App {
     public static void main(String[] args) throws Exception {
-	DB.demo();
+//	DB.demo();
+        UserAdmin.printMenu();
     }
 }
