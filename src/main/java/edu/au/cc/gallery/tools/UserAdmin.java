@@ -83,7 +83,35 @@ public class UserAdmin {
     }
 
     public static void addUser() {
+        String[] userInfo = new String[3];
+        Scanner sc = new Scanner(System.in);
+        ResultSet rs;
 
+        System.out.print("\nUsername> ");
+        userInfo[0] = sc.nextLine();
+
+        System.out.print("Password> ");
+        userInfo[1] = sc.nextLine();
+
+        System.out.print("Full Name> ");
+        userInfo[2] = sc.nextLine();
+
+        try {
+            rs = db.execute("select count(*) from users where username = \'" + userInfo[0] + "\'");
+            while (rs.next()) {
+                int totalMatch = rs.getInt(1);    
+                if (totalMatch > 0) {
+                    System.out.println("Error: user with username " + userInfo[0] + " already exists");
+                    return;
+                }
+            }
+        }
+        catch (SQLException ex) {
+            System.out.println("[ERR] " + ex.getMessage());
+            return;
+        }
+
+       /// TODO: add in db.execute for adding user 
     }
 
     public static void editUser() {
