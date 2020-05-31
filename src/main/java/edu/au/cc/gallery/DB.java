@@ -74,8 +74,9 @@ public class DB {
 
     public boolean checkIfUserExists(String userName) throws SQLException {
         ResultSet rs;
-
-        rs = executeQuery("select count(*) from users where username = ?", new String[] { userName });
+        
+        rs = executeQuery("select count(*) from users where username = ?", 
+                                    new String[] { userName.trim().toLowerCase() });
         while (rs.next()) {
             int totalMatch = rs.getInt(1);
             if (totalMatch > 0) {
@@ -141,5 +142,13 @@ public class DB {
                 + "numbers and letters.  All other characters are not valid.");
         execute("update users set password=?, fullname=? where username=?", 
                                     new String[] { password, fullName, userName });
+    }
+
+    public void deleteUser(String userName) throws SQLException, Exception {
+        if (userName.isEmpty() || ! checkIfUserExists(userName))
+            throw new SQLException("The user does not exist in the database.");
+
+        execute("delete from users where username=?",
+                                    new String[] {  userName.trim().toLowerCase() });
     }
 }

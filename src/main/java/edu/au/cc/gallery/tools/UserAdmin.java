@@ -125,10 +125,10 @@ public class UserAdmin {
         return userInfo;
     }
 
-    private static String getUsername() {
+    private static String getUsername(String message) {
         Scanner sc = new Scanner(System.in);
         
-        System.out.print("\nUsername> ");
+        System.out.print("\n" + message);
         return sc.nextLine().trim().toLowerCase();
     }
 
@@ -150,7 +150,7 @@ public class UserAdmin {
     }
 
     public static void editUser() {
-        String userName = getUsername();
+        String userName = getUsername("Username to edit> ");
         Scanner sc = new Scanner(System.in);
         String password, fullName;
 
@@ -180,12 +180,25 @@ public class UserAdmin {
             db.editUser(userName, password, fullName);
         }
         catch (Exception ex) {
-            System.out.print("[ERR] Could not edit the user: " + ex.getMessage());
+            System.out.println("[ERR] Could not edit the user: " + ex.getMessage());
         }
         
     }
 
     public static void deleteUser() {
+        String userName = getUsername("Enter username to delete> ");
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.print("\nAre you sure that you want to delete " + userName + "? (yes/no)> ");
+        String choice = sc.nextLine().trim().toLowerCase();
 
+        if (choice.equals("yes") || choice.equals("y")) {
+            try {
+                db.deleteUser(userName);
+            }
+            catch (Exception ex) {
+                System.out.println("[ERR] Could not delete the user: " + ex.getMessage());
+            }
+        }
     }
 }
