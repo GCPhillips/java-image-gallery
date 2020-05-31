@@ -35,33 +35,37 @@ public class UserAdmin {
         return value;   
     }
 
-    public static void run() throws SQLException {
+    public static void run() {
         int value = -1;
 
         db = new DB();
-        db.connect();
 
-        while (value != 5) {
-            value = printMenu();
-            switch(value) {
-                case 1:
-                    listUsers();
-                    break;
-                case 2:
-                    addUser();
-                    break;
-                case 3: 
-                    editUser();
-                    break;
-                case 4:
-                    deleteUser();
-                    break;
+        try {
+            db.connect();
+            
+            while (value != 5) {
+                value = printMenu();
+                switch(value) {
+                    case 1:
+                        listUsers();
+                        break;
+                    case 2:
+                        addUser();
+                        break;
+                    case 3: 
+                        editUser();
+                        break;
+                    case 4:
+                        deleteUser();
+                        break;
+                }
             }
+            db.close();
         }
-
-        db.close();
+        catch (SQLException ex) {
+            System.out.println("[ERR]: " + ex.getMessage());
+        }
     }
-    
 
     public static void listUsers() {
         ResultSet rs;
