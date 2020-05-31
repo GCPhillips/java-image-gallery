@@ -27,8 +27,18 @@ public class DB {
         return null;
     }
     
-    public ResultSet execute(String query) throws SQLException {
+    public ResultSet executeQuery(String query) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        return rs;
+    }
+
+    public ResultSet executeQuery(String query, String[] values) throws SQLException {
+        PreparedStatement stmt = connection.prepareStatement(query);
+        for(int i=0; i < values.length; i++) {
+            stmt.setString(i + 1, values[i]);
+        }
+        
         ResultSet rs = stmt.executeQuery();
         return rs;
     }
@@ -53,9 +63,9 @@ public class DB {
         DB db = new DB();
         db.connect();
 //        ResultSet rs = db.execute("select username,password,fullname from users");
-        db.execute("update users set password=? where username=?",
+        db.executeQuery("update users set password=? where username=?",
                                     new String[] {"monkey", "fred"});
-        ResultSet rs = db.execute("select username,password,fullname from users");
+        ResultSet rs = db.executeQuery("select username,password,fullname from users");
         while(rs.next()) { 
             System.out.println(rs.getString(1)+","+rs.getString(2)+","+rs.getString(3));
         }

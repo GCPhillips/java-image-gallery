@@ -67,7 +67,7 @@ public class UserAdmin {
         ResultSet rs;
 
         try {
-            rs = db.execute("select username,password,fullname from users");
+            rs = db.executeQuery("select username,password,fullname from users");
             System.out.println("\nusername     password     full name");
             System.out.println("-----------------------------------");           
             
@@ -97,7 +97,8 @@ public class UserAdmin {
         userInfo[2] = sc.nextLine();
 
         try {
-            rs = db.execute("select count(*) from users where username = \'" + userInfo[0] + "\'");
+//            rs = db.execute("select count(*) from users where username = \'" + userInfo[0] + "\'");
+            rs = db.executeQuery("select count(*) from users where username = ?", new String[] { userInfo[0] });
             while (rs.next()) {
                 int totalMatch = rs.getInt(1);    
                 if (totalMatch > 0) {
