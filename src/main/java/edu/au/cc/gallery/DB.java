@@ -112,11 +112,33 @@ public class DB {
         
     }
 
-    public void editUser(String userName, String password, String fullName) throws SQLException {
-        if (! fullName.matches("^[a-zA-Z-']+ [a-zA-Z-']+$"))
-            throw new SQLException("The fullname is not in a valid format. "
+    public void editUser(String userName, String password, String fullName) throws SQLException, Exception {
+        ResultSet rs;
+        
+        if (userName.isEmpty() || ! checkIfUserExists(userName))
+            throw new SQLException("The user does not exist in the database.");
+
+        if (fullName.isEmpty()) {
+            rs = executeQuery("select fullname from users where username = \'" + userName + "\'");
+            while(rs.next()) {
+                fullName = rs.getString(1);
+            }
+        }
+        if (password.isEmpty()) {
+            rs = executeQuery("select password from users where username = \'" + userName + "\'");
+            while(rs.next()) {
+                password = rs.getString(1);
+            }
+        }
+
+        if (! isValidFullname(fullName))
+            throw new Exception("The fullname is not in a valid format. "
                 + "A single space must be used between First and Last name. "
                 + "Hyphens and single-quotes are allowed.");
+        if (! isValidUsername(userName))
+            throw new Exception("The username is not in a valid format. "
+                + "Username must start with a letter followed by a mixture of (optional) "
+                + "numbers and letters.  All other characters are not valid.");
         execute("update users set password=?, fullname=? where username=?", 
                                     new String[] { password, fullName, userName });
     }

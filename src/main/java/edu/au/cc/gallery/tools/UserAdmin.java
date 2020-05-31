@@ -161,7 +161,7 @@ public class UserAdmin {
 
         try {
             if (! db.checkIfUserExists(userName)) {
-                System.out.println("[ERR] User does not exist.");
+                System.out.println("No such user.");
                 return;
             }
         }
@@ -170,10 +170,10 @@ public class UserAdmin {
         }
         
         
-        System.out.print("\nPassword> ");
+        System.out.print("\nNew Password (press enter to keep current)> ");
         password = sc.nextLine();
 
-        System.out.print("Full name> ");
+        System.out.print("New full name (press enter to keep current)> ");
         fullName = sc.nextLine();
 
         try {
