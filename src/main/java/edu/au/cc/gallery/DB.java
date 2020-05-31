@@ -72,4 +72,25 @@ public class DB {
         rs.close();
         db.close();
     }
+
+    // CRUD FUNCTIONS
+    public void addUser(String userName, String password, String fullName) throws SQLException {
+        ResultSet rs;
+
+        rs = executeQuery("select count(*) from users where username = ?", new String[] { userName });
+        while (rs.next()) {
+            int totalMatch = rs.getInt(1);
+            if (totalMatch > 0) {
+                throw new SQLException("The username already exists in the database");
+            }
+        }
+        if (! fullName.matches("^[a-zA-Z-']+ [a-zA-Z-']+$"))
+            throw new SQLException("The fullname is not in a valid format. "
+                + "A single space must be used between First and Last name. "
+                + "Hyphens and single-quotes are allowed.");
+
+        execute("insert into users (username, password, fullname) values (?, ?, ?)",
+                                new String[] { userName, password, fullName });
+        
+    }
 }

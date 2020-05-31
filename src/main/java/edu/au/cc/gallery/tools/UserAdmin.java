@@ -82,37 +82,65 @@ public class UserAdmin {
         } 
     }
 
-    public static void addUser() {
+    private static boolean userInfoIsValid(String[] userInfo) {
+        for (int i=0; i < 2; i++) {
+            if (userInfo[i].contains(" ") || userInfo[i].isEmpty())
+                return false;
+        }
+
+        if (userInfo[2].isEmpty()) 
+            return false;
+
+        return true;        
+    }
+
+    private static String[] getUserInfo() {
         String[] userInfo = new String[3];
         Scanner sc = new Scanner(System.in);
-        ResultSet rs;
 
         System.out.print("\nUsername> ");
-        userInfo[0] = sc.nextLine();
+        userInfo[0] = sc.nextLine().trim().toLowerCase();
 
         System.out.print("Password> ");
-        userInfo[1] = sc.nextLine();
+        userInfo[1] = sc.nextLine().trim();
 
-        System.out.print("Full Name> ");
-        userInfo[2] = sc.nextLine();
+        System.out.print("First Name> ");
+        userInfo[2] = sc.nextLine().trim();
+
+        System.out.print("Last Name> ");
+        userInfo[2] = userInfo[2] + " " + sc.nextLine().trim();
+
+        if (! userInfoIsValid(userInfo)) {
+            System.out.println("The information entered is not valid:");
+            System.out.println("Username and Password can't contain spaces,");
+            System.out.println("values entered can't be blank");
+
+            return null;
+        }
+
+        return userInfo;
+    }
+
+    public static String getUsername() {
+        ///TODO
+        // prompts the user for the username.  Used on editUser() and deleteUser().
+    }
+
+    public static void addUser() {
+        String[] userInfo = getUserInfo();
+        ResultSet rs;
+
+        if (userInfo == null)
+            return; 
 
         try {
-//            rs = db.execute("select count(*) from users where username = \'" + userInfo[0] + "\'");
-            rs = db.executeQuery("select count(*) from users where username = ?", new String[] { userInfo[0] });
-            while (rs.next()) {
-                int totalMatch = rs.getInt(1);    
-                if (totalMatch > 0) {
-                    System.out.println("Error: user with username " + userInfo[0] + " already exists");
-                    return;
-                }
-            }
+            db.addUser(userInfo[0], userInfo[1], userInfo[2]);        
+            
         }
         catch (SQLException ex) {
             System.out.println("[ERR] " + ex.getMessage());
             return;
         }
-
-       /// TODO: add in db.execute for adding user 
     }
 
     public static void editUser() {
