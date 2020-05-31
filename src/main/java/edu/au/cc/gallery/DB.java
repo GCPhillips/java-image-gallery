@@ -62,7 +62,6 @@ public class DB {
     public static void demo() throws Exception {
         DB db = new DB();
         db.connect();
-//        ResultSet rs = db.execute("select username,password,fullname from users");
         db.executeQuery("update users set password=? where username=?",
                                     new String[] {"monkey", "fred"});
         ResultSet rs = db.executeQuery("select username,password,fullname from users");
@@ -73,24 +72,52 @@ public class DB {
         db.close();
     }
 
-    // CRUD FUNCTIONS
-    public void addUser(String userName, String password, String fullName) throws SQLException {
+    public boolean checkIfUserExists(String userName) throws SQLException {
         ResultSet rs;
 
         rs = executeQuery("select count(*) from users where username = ?", new String[] { userName });
         while (rs.next()) {
             int totalMatch = rs.getInt(1);
             if (totalMatch > 0) {
-                throw new SQLException("The username already exists in the database");
+                return true;
             }
         }
+
+        return false;
+    }
+
+    private boolean isValidUsername(String userName) {
+        return userName.matches("^[a-zA-Z]+[a-zA-Z0-9]+$");
+    }
+
+    private boolean isValidFullname(String fullName) {
+        return fullName.matches("^[a-zA-Z-']+ [a-zA-Z-']+$");
+    }
+    
+    public void addUser(String userName, String password, String fullName) throws SQLException, Exception {
+        if (checkIfUserExists(userName))
+            throw new SQLException("The username \"" + userName + "\" already exists.");
+ 
+        if (! isValidFullname(fullName))
+            throw new Exception("The fullname is not in a valid format. "
+                + "A single space must be used between First and Last name. "
+                + "Hyphens and single-quotes are allowed.");
+        if (! isValidUsername(userName))
+            throw new Exception("The username is not in a valid format. "
+                + "Username must start with a letter followed by a mixture of (optional) "
+                + "numbers and letters.  All other characters are not valid.");
+
+        execute("insert into users (username, password, fullname) values (?, ?, ?)",
+                                    new String[] { userName, password, fullName });
+        
+    }
+
+    public void editUser(String userName, String password, String fullName) throws SQLException {
         if (! fullName.matches("^[a-zA-Z-']+ [a-zA-Z-']+$"))
             throw new SQLException("The fullname is not in a valid format. "
                 + "A single space must be used between First and Last name. "
                 + "Hyphens and single-quotes are allowed.");
-
-        execute("insert into users (username, password, fullname) values (?, ?, ?)",
-                                new String[] { userName, password, fullName });
-        
+        execute("update users set password=?, fullname=? where username=?", 
+                                    new String[] { password, fullName, userName });
     }
 }

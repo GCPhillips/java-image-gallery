@@ -17,7 +17,7 @@ public class UserAdmin {
         Scanner sc = new Scanner(System.in);
 
         System.out.println(
-            "1) List Users\n"
+            "\n1) List Users\n"
             + "2) Add User\n"
             + "3) Edit User\n"
             + "4) Delete User\n"
@@ -125,9 +125,11 @@ public class UserAdmin {
         return userInfo;
     }
 
-    public static String getUsername() {
-        ///TODO
-        // prompts the user for the username.  Used on editUser() and deleteUser().
+    private static String getUsername() {
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.print("\nUsername> ");
+        return sc.nextLine().trim().toLowerCase();
     }
 
     public static void addUser() {
@@ -141,14 +143,46 @@ public class UserAdmin {
             db.addUser(userInfo[0], userInfo[1], userInfo[2]);        
             
         }
-        catch (SQLException ex) {
+        catch (Exception ex) {
             System.out.println("[ERR] " + ex.getMessage());
             return;
         }
     }
 
     public static void editUser() {
+        String userName = getUsername();
+        Scanner sc = new Scanner(System.in);
+        String password, fullName;
 
+        if (userName.isEmpty()) {
+            System.out.println("[ERR] Username can't be empty.");
+            return;
+        }
+
+        try {
+            if (! db.checkIfUserExists(userName)) {
+                System.out.println("[ERR] User does not exist.");
+                return;
+            }
+        }
+        catch (Exception ex) {
+                System.out.println("[ERR] " + ex.getMessage());
+        }
+        
+        
+        System.out.print("\nPassword> ");
+        password = sc.nextLine();
+
+        System.out.print("Full name> ");
+        fullName = sc.nextLine();
+
+        try {
+            db.editUser(userName, password, fullName);
+        }
+        catch (Exception ex) {
+            System.out.print("[ERR] Could not edit the user: " + ex.getMessage());
+        }
+        
     }
 
     public static void deleteUser() {
