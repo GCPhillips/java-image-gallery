@@ -1,29 +1,36 @@
 package edu.au.cc.gallery;
 
+import software.amazon.awssdk.regions.Region;
+
+import software.amazon.awssdk.services.secretsmanager.*;
+import software.amazon.awssdk.services.secretsmanager.model.*;
+
+import java.util.Base64;
+
 public class Secrets {
 
     // Use this code snippet in your app.
 // If you need more information about configurations or implementing the sample code, visit the AWS docs:
 // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-samples.html#prerequisites
 
-    public static void getSecretImageGallery() {
+    public static String getSecretImageGallery() {
 
         String secretName = "sec-ig-image_gallery";
-        String region = "us-east-2";
+        Region region = Region.US_EAST_2;
 
         // Create a Secrets Manager client
-        AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()
-                .withRegion(region)
-                .build();
-
+        SecretsManagerClient client  = SecretsManagerClient.builder()
+		.region(region)
+		.build();
         // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
         // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         // We rethrow the exception by default.
 
         String secret, decodedBinarySecret;
-        GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest()
-                .withSecretId(secretName);
-        GetSecretValueResult getSecretValueResult = null;
+        GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
+		.secretId(secretName)
+                .build();
+        GetSecretValueResponse getSecretValueResult = null;
 
         try {
             getSecretValueResult = client.getSecretValue(getSecretValueRequest);
@@ -48,16 +55,7 @@ public class Secrets {
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         }
-
-        // Decrypts secret using the associated KMS CMK.
-        // Depending on whether the secret is a string or binary, one of these fields will be populated.
-        if (getSecretValueResult.getSecretString() != null) {
-            secret = getSecretValueResult.getSecretString();
-        }
-        else {
-            decodedBinarySecret = new String(Base64.getDecoder().decode(getSecretValueResult.getSecretBinary()).array());
-        }
-
         // Your code goes here.
+	return getSecretValueResult.secretString();
     }
 }
