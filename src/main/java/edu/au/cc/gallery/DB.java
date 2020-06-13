@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 public class DB {
     
-    private static final String dbUrl = "jdbc:postgresql://image-gallery-database.cs6pn3k8vrxr.us-east-2.rds.amazonaws.com/image_gallery";
+    private static final String dbUrl = "jdbc:postgresql://image-gallery.cs6pn3k8vrxr.us-east-2.rds.amazonaws.com/image_gallery";
     private Connection connection;
 
     private JSONObject getSecret() {

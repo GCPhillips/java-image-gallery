@@ -10,13 +10,15 @@ import java.util.Map;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 public class App {
-    /*
+    
     public static void main(String[] args) throws Exception {
 //	DB.demo();
 //        UserAdmin.printMenu();
         UserAdmin.run();        
     }
-    */
+    
+
+	/*
     public static void main(String[] args) throws Exception {
 	port(5000);
 	get("/hello", (req, res) -> "Hello World");
@@ -32,5 +34,6 @@ public class App {
 		return new HandlebarsTemplateEngine()
 			.render(new ModelAndView(model, "calculator.hbs"));
 	});
-    }
+
+    } */
 }
