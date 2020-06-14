@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add User</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <h1>Add User</h1>
+    <form action="/admin/adduser" method="POST">
+      <h3>Username: <input type="text" name="name" minlength="3" maxlength="16" required></h3>
+      <h3>Password: <input type="password" name="pass" minlength="6" maxlength="16" required></h3>
+      <h3>Fullname: <input type="text" name="fullname" minlength="3" maxlength="75" required></h3>
+      <button type="submit">Add</button> 
+    </form>
+  </body>
+</html>

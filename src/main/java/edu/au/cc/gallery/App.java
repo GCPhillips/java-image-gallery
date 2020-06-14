@@ -4,21 +4,18 @@
 package edu.au.cc.gallery;
 
 import edu.au.cc.gallery.tools.UserAdmin;
-import static spark.Spark.*;
-import java.util.HashMap;
-import java.util.Map;
-import spark.ModelAndView;
-import spark.template.handlebars.HandlebarsTemplateEngine;
+import edu.au.cc.gallery.tools.WebAdmin;
+
 public class App {
-    
+   /* 
     public static void main(String[] args) throws Exception {
 //	DB.demo();
 //        UserAdmin.printMenu();
         UserAdmin.run();        
     }
-    
+   */ 
 
-	/*
+/*	
     public static void main(String[] args) throws Exception {
 	port(5000);
 	get("/hello", (req, res) -> "Hello World");
@@ -35,5 +32,10 @@ public class App {
 			.render(new ModelAndView(model, "calculator.hbs"));
 	});
 
-    } */
+    } 
+    */
+
+    public static void main(String[] args) throws Exception {
+	WebAdmin.run();
+    }
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Delete {{name}}</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <h1>Delete {{name}}</h1>
+    <h3>Are you sure?</h3>
+    <form action="/admin/deleteuser" method="POST">
+	    <button name="name" type="submit" value={{name}}>Yes</button>
+    </form>
+    <form action="/admin" method="GET">
+	    <button type="submit">No</button>
+    </form>
+  </body>
+</html>

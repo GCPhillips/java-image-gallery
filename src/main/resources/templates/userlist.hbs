@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Gallery Users</title>
+    <meta charset="utf-8"/>
+  </head>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 15px;
+    }
+  </style>
+  <body>
+    <h1>Users</h1>
+    <table style="width:100%">
+      <tr>
+        <th>Username</th>
+	<th>Fullname</th>
+	<th>Edit</th>
+	<th>Delete</th>
+      </tr>
+      {{#each users}}
+      <tr>
+        <td align="center">{{name}}</td>
+	<td align="center" >{{fullname}}</td>
+	<td align="center"><form action="/admin/edituserform" method="POST">
+			<button name="edit" type="submit" value={{name}}>edit</button>
+		</form>
+	</td>
+	<td align="center"><form action="/admin/deleteuserform" method="POST">
+			<button name="name" type="submit" value={{name}}>delete</button>
+		</form>
+	</td>
+      </tr>
+      {{/each}}
+    </table>
+    <hr>
+    <h3>Add Users</h3>
+    <form action="/admin/adduserform" method="POST">
+	<button name="add" type="submit">Add User</button>
+    </form>
+  </body>
+</html>
