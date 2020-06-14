@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit User {{name}}</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <h1>Edit User</h1>
+    <form action="/admin/edituser" method="POST">
+      <h3>Username: {{name}}</h3>
+      <h3>Password: <input type="password" name="pass" minlength="6" maxlength="16" required></h3>
+      <h3>Fullname: <input type="text" name="fullname" minlength="3" maxlength="75" required></h3>
+      <button type="submit" name="name" value={{name}}>Edit</button> 
+    </form>
+    <form action="/admin" method="GET">
+	    <button type="submit">Cancel</button> 
+    </form>
+  </body>
+</html>

@@ -81,7 +81,7 @@ public class WebAdmin {
     private static String editUserForm(Request req, Response res) {
 	Map<String, Object> model = new HashMap<>();
 
-	model.put("name", req.attribute("name"));
+	model.put("name", req.queryParams("name"));
 
 	return render(model, "edituserform.hbs");
     }
@@ -89,9 +89,15 @@ public class WebAdmin {
     private static String editUser(Request req, Response res) {
 	Map<String, Object> model = new HashMap<>();
 
-	model.put("name", req.queryParams("name"));
+	try {
+	    db.editUser(req.queryParams("name"), req.queryParams("pass"), req.queryParams("fullname"));
+	}
+	catch (Exception ex) {
+	    System.out.println("[ERR] Could not edit user " + req.queryParams("name") + ": " + ex.getMessage());
+	}
 
-	return render(model, "edituser.hbs");
+	res.redirect("/admin");
+	return getUsers(null, null);
     }
 
     private static String deleteUserForm(Request req, Response res) {

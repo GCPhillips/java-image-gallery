@@ -14,8 +14,8 @@
     }
   </style>
   <body>
-    <h1>Users</h1>
-    <table style="width:100%">
+    <h1>Image Gallery Users</h1>
+    <table style="width:80%">
       <tr>
         <th>Username</th>
 	<th>Fullname</th>
@@ -27,7 +27,7 @@
         <td align="center">{{name}}</td>
 	<td align="center" >{{fullname}}</td>
 	<td align="center"><form action="/admin/edituserform" method="POST">
-			<button name="edit" type="submit" value={{name}}>edit</button>
+			<button name="name" type="submit" value={{name}}>edit</button>
 		</form>
 	</td>
 	<td align="center"><form action="/admin/deleteuserform" method="POST">
@@ -38,9 +38,8 @@
       {{/each}}
     </table>
     <hr>
-    <h3>Add Users</h3>
     <form action="/admin/adduserform" method="POST">
-	<button name="add" type="submit">Add User</button>
+      <button name="add" type="submit">Add User</button>
     </form>
   </body>
 </html>
