@@ -43,6 +43,7 @@ public class WebAdmin {
 	post(apiBase + "/edituser", (req, res) -> editUser(req, res));
 	post(apiBase + "/adduserform", (req, res) -> addUserForm(req, res));
 	post(apiBase + "/adduser", (req, res) -> addUser(req, res));
+//	post(apiBase + "/error", (req, res) -> error(req, res));
     }
 
     public static void stop() {
@@ -94,6 +95,8 @@ public class WebAdmin {
 	}
 	catch (Exception ex) {
 	    System.out.println("[ERR] Could not edit user " + req.queryParams("name") + ": " + ex.getMessage());
+	    model.put("message", ex.getMessage());
+	    return render(model, "error.hbs");
 	}
 
 	res.redirect("/admin");
@@ -109,11 +112,15 @@ public class WebAdmin {
     }
 
     private static String deleteUser(Request req, Response res) {
+	Map<String, Object> model = new HashMap<>();
+
 	try {
 	    db.deleteUser(req.queryParams("name"));
 	}
 	catch (Exception ex) {
 	    System.out.println("[ERR] Could not delete the user " + req.queryParams("name") + ": " + ex.getMessage());
+	    model.put("message", ex.getMessage());
+	    return render(model, "error.hbs");
 	}
 
 	res.redirect("/admin");
@@ -127,11 +134,15 @@ public class WebAdmin {
     }
 
     private static String addUser(Request req, Response res) {
+	Map<String, Object> model = new HashMap<>();
+
 	try {
 	    db.addUser(req.queryParams("name"), req.queryParams("pass"), req.queryParams("fullname"));
 	}
 	catch (Exception ex) {
 	    System.out.println("[ERR] Could not add the user " + req.queryParams("name") + ": " + ex.getMessage());
+	    model.put("message", ex.getMessage());
+	    return render(model, "error.hbs");
 	}
 
 	res.redirect("/admin");
