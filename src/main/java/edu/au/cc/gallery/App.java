@@ -36,6 +36,10 @@ public class App {
     */
 
     public static void main(String[] args) throws Exception {
-	WebAdmin.run();
+	String portString = System.getenv("JETTY_PORT");
+	int port = 5000;
+	if (portString != null || ! portString.equals(""))
+	    port = Integer.parseInt(portString);
+	WebAdmin.run(port);
     }
 }

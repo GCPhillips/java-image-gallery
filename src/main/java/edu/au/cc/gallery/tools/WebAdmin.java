@@ -23,8 +23,8 @@ public class WebAdmin {
     private static final String apiBase = "/admin";
     private static DB db;
 
-    public static void run() {
-        port(5000);
+    public static void run(int portValue) {
+        port(portValue);
 	db = new DB();
 	addRoutes();
 	try {
