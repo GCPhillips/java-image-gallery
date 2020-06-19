@@ -11,8 +11,8 @@ git clone https://github.com/gcphillips/java-image-gallery.git
 chown -R ec2-user:ec2-user java-image-gallery
 
 CONFIG_BUCKET="s3://edu.au.gcp0015.image-gallery-config"
-aws s3 cp ${CONFIG_BUCKET}/nginx.conf /etc/nginx/nginx.conf
-aws s3 cp ${CONFIG_BUCKET}/default.d/image_gallery.conf /etc/nginx/default.d/image_gallery.conf
+aws s3 cp ${CONFIG_BUCKET}/nginx/nginx.conf /etc/nginx/nginx.conf
+aws s3 cp ${CONFIG_BUCKET}/nginx/default.d/image_gallery.conf /etc/nginx/default.d/image_gallery.conf
 
 systemctl stop postfix
 systemctl disable postfix
