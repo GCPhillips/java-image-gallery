@@ -6,12 +6,29 @@ package edu.au.cc.gallery;
 import edu.au.cc.gallery.tools.UserAdmin;
 import edu.au.cc.gallery.tools.WebAdmin;
 
+import static spark.Spark.*;
+
 public class App {
     public static void main(String[] args) throws Exception {
         String portString = System.getenv("JETTY_PORT");
-        int port = 5000;
-        if (portString != null || !portString.equals(""))
-            port = Integer.parseInt(portString);
-        WebAdmin.run(port);
+        if (portString == null || portString.equals(""))
+            port(5000);
+        else
+            port(Integer.parseInt(portString));
+        get("/users", (res, req) -> listUsers());
+    }
+
+    private static String listUsers() {
+        try {
+            StringBuffer sb = new StringBuffer();
+            UserDAO dao = Postgres.getUserDAO();
+            for (User u : dao.getUsers()) {
+                sb.append(u.toString());
+            }
+            return sb.toString();
+        }
+        catch (Exception ex) {
+            return "[ERR]: " + ex.getMessage();
+        }
     }
 }
