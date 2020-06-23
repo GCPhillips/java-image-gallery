@@ -27,7 +27,7 @@ hs_err_pid*
 
 # Ignore Intellij
 .idea
-.iml
+*.iml
 
 # Ignore Gradle build output directory
 build
