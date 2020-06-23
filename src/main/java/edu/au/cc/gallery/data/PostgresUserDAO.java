@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PostgresUserDAO implements UserDAO{
+public class PostgresUserDAO implements UserDAO {
     private DB connection;
 
     public PostgresUserDAO() throws SQLException {
@@ -24,15 +24,20 @@ public class PostgresUserDAO implements UserDAO{
     }
 
     public User getUserByUsername(String username) throws SQLException {
-        ResultSet rs = connection.executeQuery("select username,password,fullname from users where username=?", new String[] {username});
-	if (rs.next()) {
+        ResultSet rs = connection.executeQuery("select username,password,fullname from users where username=?", new String[]{username});
+        if (rs.next()) {
             return new User(rs.getString(1), rs.getString(2), rs.getString(3));
-	}
-	return null;
+        }
+        return null;
     }
 
     public void addUser(User u) throws SQLException {
         connection.execute("insert into users(username,password,fullname) values (?,?,?)",
-			new String[] { u.getUsername(), u.getPassword(), u.getFullName() });
+                new String[]{u.getUsername(), u.getPassword(), u.getFullName()});
+    }
+
+    public void deleteUser(User u) throws SQLException {
+        connection.execute("delete from users where username=?",
+                new String[]{u.getUsername()});
     }
 }
