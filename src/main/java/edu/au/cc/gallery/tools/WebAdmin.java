@@ -1,6 +1,7 @@
 package edu.au.cc.gallery.tools;
 
-import edu.au.cc.gallery.DB;
+import edu.au.cc.gallery.data.DB;
+import edu.au.cc.gallery.data.User;
 
 import static spark.Spark.*;
 

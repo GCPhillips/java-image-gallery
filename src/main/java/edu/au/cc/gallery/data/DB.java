@@ -1,4 +1,4 @@
-package edu.au.cc.gallery;
+package edu.au.cc.gallery.data;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import edu.au.cc.gallery.aws.Secrets;
 
 public class DB {
 

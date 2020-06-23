@@ -5,7 +5,8 @@ import java.util.Scanner;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import edu.au.cc.gallery.DB;
+import edu.au.cc.gallery.data.DB;
+import edu.au.cc.gallery.data.User;
 
 public class UserAdmin {
 
