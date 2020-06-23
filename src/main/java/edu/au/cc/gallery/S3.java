@@ -19,20 +19,20 @@ public class S3 {
 
     public void createBucket(String bucketName) {
         CreateBucketRequest createBucketRequest = CreateBucketRequest
-            .builder()
-            .bucket(bucketName)
-            .createBucketConfiguration(CreateBucketConfiguration.builder()
-                    .locationConstraint(region.id())
-                    .build())
-            .build();   
+                .builder()
+                .bucket(bucketName)
+                .createBucketConfiguration(CreateBucketConfiguration.builder()
+                        .locationConstraint(region.id())
+                        .build())
+                .build();
         client.createBucket(createBucketRequest);
     }
 
     public void putObject(String bucketName, String key, String value) {
         PutObjectRequest por = PutObjectRequest.builder()
-            .bucket(bucketName)
-            .key(key)
-            .build();
+                .bucket(bucketName)
+                .key(key)
+                .build();
 
         client.putObject(por, RequestBody.fromString(value));
 
@@ -40,9 +40,9 @@ public class S3 {
 
     public void deleteObject(String bucketName, String key) {
         DeleteObjectRequest dor = DeleteObjectRequest.builder()
-            .bucket(bucketName)
-            .key(key)
-            .build();
+                .bucket(bucketName)
+                .key(key)
+                .build();
         client.deleteObject(dor);
 
     }

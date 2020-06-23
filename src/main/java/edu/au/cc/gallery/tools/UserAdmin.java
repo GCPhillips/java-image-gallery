@@ -13,26 +13,25 @@ public class UserAdmin {
 
     public static int printMenu() {
         int value = -1;
-        
+
         Scanner sc = new Scanner(System.in);
 
         System.out.println(
-            "\n1) List Users\n"
-            + "2) Add User\n"
-            + "3) Edit User\n"
-            + "4) Delete User\n"
-            + "5) Quit");
+                "\n1) List Users\n"
+                        + "2) Add User\n"
+                        + "3) Edit User\n"
+                        + "4) Delete User\n"
+                        + "5) Quit");
         System.out.print("Enter command> ");
         String entry = sc.nextLine();
 
         try {
             value = Integer.parseInt(entry);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return -1;
-        }             
+        }
 
-        return value;   
+        return value;
     }
 
     public static void run() {
@@ -42,17 +41,17 @@ public class UserAdmin {
 
         try {
             db.connect();
-            
+
             while (value != 5) {
                 value = printMenu();
-                switch(value) {
+                switch (value) {
                     case 1:
                         listUsers();
                         break;
                     case 2:
                         addUser();
                         break;
-                    case 3: 
+                    case 3:
                         editUser();
                         break;
                     case 4:
@@ -61,8 +60,7 @@ public class UserAdmin {
                 }
             }
             db.close();
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             System.out.println("[ERR]: " + ex.getMessage());
         }
     }
@@ -73,29 +71,28 @@ public class UserAdmin {
         try {
             rs = db.executeQuery("select username,password,fullname from users");
             System.out.println("\nusername     password     full name");
-            System.out.println("-----------------------------------");           
-            
-            while(rs.next()) {
+            System.out.println("-----------------------------------");
+
+            while (rs.next()) {
                 System.out.printf("%-12s %-12s %-12s\n", rs.getString(1), rs.getString(2), rs.getString(3));
             }
 
             System.out.println();
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             System.out.println("[ERR] " + ex.getMessage());
-        } 
+        }
     }
 
     private static boolean userInfoIsValid(String[] userInfo) {
-        for (int i=0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             if (userInfo[i].contains(" ") || userInfo[i].isEmpty())
                 return false;
         }
 
-        if (userInfo[2].isEmpty()) 
+        if (userInfo[2].isEmpty())
             return false;
 
-        return true;        
+        return true;
     }
 
     private static String[] getUserInfo() {
@@ -114,7 +111,7 @@ public class UserAdmin {
         System.out.print("Last Name> ");
         userInfo[2] = userInfo[2] + " " + sc.nextLine().trim();
 
-        if (! userInfoIsValid(userInfo)) {
+        if (!userInfoIsValid(userInfo)) {
             System.out.println("The information entered is not valid:");
             System.out.println("Username and Password can't contain spaces,");
             System.out.println("values entered can't be blank");
@@ -127,7 +124,7 @@ public class UserAdmin {
 
     private static String getUsername(String message) {
         Scanner sc = new Scanner(System.in);
-        
+
         System.out.print("\n" + message);
         return sc.nextLine().trim().toLowerCase();
     }
@@ -137,13 +134,12 @@ public class UserAdmin {
         ResultSet rs;
 
         if (userInfo == null)
-            return; 
+            return;
 
         try {
-            db.addUser(userInfo[0], userInfo[1], userInfo[2]);        
-            
-        }
-        catch (Exception ex) {
+            db.addUser(userInfo[0], userInfo[1], userInfo[2]);
+
+        } catch (Exception ex) {
             System.out.println("[ERR] " + ex.getMessage());
             return;
         }
@@ -160,16 +156,15 @@ public class UserAdmin {
         }
 
         try {
-            if (! db.checkIfUserExists(userName)) {
+            if (!db.checkIfUserExists(userName)) {
                 System.out.println("No such user.");
                 return;
             }
+        } catch (Exception ex) {
+            System.out.println("[ERR] " + ex.getMessage());
         }
-        catch (Exception ex) {
-                System.out.println("[ERR] " + ex.getMessage());
-        }
-        
-        
+
+
         System.out.print("\nNew Password (press enter to keep current)> ");
         password = sc.nextLine();
 
@@ -178,25 +173,23 @@ public class UserAdmin {
 
         try {
             db.editUser(userName, password, fullName);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             System.out.println("[ERR] Could not edit the user: " + ex.getMessage());
         }
-        
+
     }
 
     public static void deleteUser() {
         String userName = getUsername("Enter username to delete> ");
         Scanner sc = new Scanner(System.in);
-        
+
         System.out.print("\nAre you sure that you want to delete " + userName + "? (yes/no)> ");
         String choice = sc.nextLine().trim().toLowerCase();
 
         if (choice.equals("yes") || choice.equals("y")) {
             try {
                 db.deleteUser(userName);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 System.out.println("[ERR] Could not delete the user: " + ex.getMessage());
             }
         }

@@ -15,20 +15,20 @@ public class Secrets {
 
     public static String getSecretImageGallery() {
 
-        String secretName = "sec-ig-image_gallery-user"; 
+        String secretName = "sec-ig-image_gallery-user";
         Region region = Region.US_EAST_2;
 
         // Create a Secrets Manager client
-        SecretsManagerClient client  = SecretsManagerClient.builder()
-		.region(region)
-		.build();
+        SecretsManagerClient client = SecretsManagerClient.builder()
+                .region(region)
+                .build();
         // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
         // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         // We rethrow the exception by default.
 
         String secret, decodedBinarySecret;
         GetSecretValueRequest getSecretValueRequest = GetSecretValueRequest.builder()
-		.secretId(secretName)
+                .secretId(secretName)
                 .build();
         GetSecretValueResponse getSecretValueResult = null;
 
@@ -56,6 +56,6 @@ public class Secrets {
             throw e;
         }
         // Your code goes here.
-	return getSecretValueResult.secretString();
+        return getSecretValueResult.secretString();
     }
 }
