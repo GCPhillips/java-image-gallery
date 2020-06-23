@@ -10,8 +10,8 @@ import java.util.Base64;
 public class Secrets {
 
     // Use this code snippet in your app.
-// If you need more information about configurations or implementing the sample code, visit the AWS docs:
-// https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-samples.html#prerequisites
+    // If you need more information about configurations or implementing the sample code, visit the AWS docs:
+    // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-samples.html#prerequisites
 
     public static String getSecretImageGallery() {
 
