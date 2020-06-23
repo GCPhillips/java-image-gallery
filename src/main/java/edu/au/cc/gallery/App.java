@@ -11,11 +11,10 @@ import static spark.Spark.*;
 public class App {
     public static void main(String[] args) throws Exception {
         String portString = System.getenv("JETTY_PORT");
-        if (portString == null || portString.equals(""))
-            port(5000);
-        else
-            port(Integer.parseInt(portString));
-        get("/users", (res, req) -> listUsers());
+	int port = 5000;
+	if (portString != null && ! portString.equals(""))
+            port = Integer.parseInt(portString);
+    	WebAdmin.run(port);
     }
 
     private static String listUsers() {
