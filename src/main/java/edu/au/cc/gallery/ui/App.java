@@ -38,13 +38,13 @@ public class App {
         get("/admin/adduser/:username/:password/:fullname",
                 (req, res) -> addUser(req.params(":username"), req.params(":password"), req.params(":fullname"), res));
         post("/admin/deleteuserform",
-                (req, res) -> deleteUserForm(req.queryParams("username"), req));
+                (req, res) -> deleteUserForm(req.queryParams("name"), req));
         post("/admin/deleteuser",
-                (req, res) -> deleteUser(req.queryParams("username"), res));
+                (req, res) -> deleteUser(req.queryParams("name"), res));
         post("/admin/edituserform",
-                (req, res) -> editUserForm(req.queryParams("username"), req));
+                (req, res) -> editUserForm(req.queryParams("name"), req));
         post("admin/edituser",
-                (req, res) -> editUser(req.queryParams("username"), req, res));
+                (req, res) -> editUser(req.queryParams("name"), req, res));
     }
 
     private static UserDAO getUserDAO() throws Exception {
