@@ -40,4 +40,9 @@ public class PostgresUserDAO implements UserDAO {
         connection.execute("delete from users where username=?",
                 new String[]{u.getUsername()});
     }
+
+    public void editUser(User u) throws SQLException {
+        connection.execute("update users set password=?, fullname=? where username=?",
+                new String[]{u.getUsername(), u.getPassword(), u.getFullName()});
+    }
 }

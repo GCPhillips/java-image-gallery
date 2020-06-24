@@ -23,4 +23,9 @@ public interface UserDAO {
      * Remove a user from the database
      */
     void deleteUser(User u) throws Exception;
+
+    /**
+     * Edit a user on the database
+     */
+    void editUser(User u) throws Exception;
 }
