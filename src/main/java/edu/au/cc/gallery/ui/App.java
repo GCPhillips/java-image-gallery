@@ -35,16 +35,18 @@ public class App {
         get(homePage, (res, req) -> listUsers());
         get("/admin/users/:username",
                 (req, res) -> getUser(req.params(":username")));
-        get("/admin/adduser/:username/:password/:fullname",
-                (req, res) -> addUser(req.params(":username"), req.params(":password"), req.params(":fullname"), res));
+        post("/admin/adduser",
+                (req, res) -> addUser(req.queryParams("name"), req.queryParams("pass"), req.queryParams("fullname"), res));
         post("/admin/deleteuserform",
                 (req, res) -> deleteUserForm(req.queryParams("name"), req));
         post("/admin/deleteuser",
                 (req, res) -> deleteUser(req.queryParams("name"), res));
         post("/admin/edituserform",
                 (req, res) -> editUserForm(req.queryParams("name"), req));
-        post("admin/edituser",
+        post("/admin/edituser",
                 (req, res) -> editUser(req.queryParams("name"), req, res));
+        post("/admin/adduserform",
+                (req, res) -> addUserForm());
     }
 
     private static UserDAO getUserDAO() throws Exception {
@@ -77,6 +79,10 @@ public class App {
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
+    }
+
+    private static String addUserForm() {
+        return render(null, "adduserform.hbs");
     }
 
     private static String addUser(String username, String password, String fullName, Response r) {
