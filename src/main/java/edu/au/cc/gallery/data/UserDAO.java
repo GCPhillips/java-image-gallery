@@ -18,4 +18,14 @@ public interface UserDAO {
      * Add a user to the database
      */
     void addUser(User u) throws Exception;
+
+    /**
+     * Remove a user from the database
+     */
+    void deleteUser(User u) throws Exception;
+
+    /**
+     * Edit a user on the database
+     */
+    void editUser(User u) throws Exception;
 }
