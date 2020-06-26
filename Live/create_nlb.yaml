@@ -1,0 +1,16 @@
+---
+- host: localhost
+  gather_facts: no
+  module_defaults:
+    group/aws:
+      region: "us-east-2"
+  tasks:
+    - name: Create VPC
+      ec2_vpc_net:
+        name: Module5
+        cidr_block: 10.10.0.0/16
+        tags:
+          Module: 5
+        state: present
+      register: vpc
+    - name: [NLB] Create Target Group
