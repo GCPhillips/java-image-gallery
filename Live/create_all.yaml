@@ -1,11 +1,3 @@
 ---
 - import_playbook: create_vpc.yaml
-
-  # create sg for interacting with rds, attach to private sn
-- import_playbook: create_ec2.yaml
-  # create launch template
-  # create asg
-  # create elb
-  #   need two EIPs allocated
-  # create rds
-# modules to look at: ec2_elb_lb, ec2_lc, ec2_asg
+- import_playbook: create_sg.yaml
