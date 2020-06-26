@@ -1,16 +1,26 @@
 ---
-- host: localhost
+- hosts: localhost
   gather_facts: no
   module_defaults:
     group/aws:
       region: "us-east-2"
   tasks:
-    - name: Create VPC
-      ec2_vpc_net:
-        name: Module5
-        cidr_block: 10.10.0.0/16
-        tags:
-          Module: 5
+    - name: NLB Create Target Group
+      elb_target_group:
+        name: Module5-tg
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
-      register: vpc
-    - name: [NLB] Create Target Group
+      register: nlb_tg
+    - name: NLB Create Launch Template
+      ec2_launch_template:
+        name: "Module5_launch_template"
+        image_id: "ami-026dea5602e368e96"
+        key_name: mint-tower
+        instance_type: t2.micro
+        iam_instance_profile: image-gallery-server-role
+        network_interfaces:
+        - associate_public_ip_address: yes
+          delete_on_termination: yes
+        user_data: "{{ lookup('file', './startup-scripts/ec2_startup.sh') | b64encode }}"
