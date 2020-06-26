@@ -90,6 +90,35 @@
         routes:
           - dest: 0.0.0.0/0
             gateway_id: "{{ nat.nat_gateway_id }}"
+    - name: Set up private subnet ACL
+      ec2_vpc_nacl:
+        vpc_id: "{{ vpc.vpc.id }}"
+        name: Module5-private-acl
+        subnets:
+          - "{{ private_subnet_1.subnet.id }}"
+          - "{{ private_subnet_2.subnet.id }}"
+        ingress:
+          - [100, 'tcp', 'allow', '10.10.0.0/16', null, null, 5432, 5432]
+          - [200, 'tcp', 'allow', '10.10.0.0/16', null, null, 443, 443]
+          - [300, 'tcp', 'allow', '10.10.0.0/16', null, null, 1024, 65535]
+        egress:
+          - [100, 'tcp', 'allow', '10.10.0.0/16', null, null, 1024, 65535]
+          - [200, 'tcp', 'allow', '10.10.0.0/16', null, null, 443, 443]
+        state: present
+    - name: Grab rules for public subnet ACL from .public_acl_rules.yaml
+      include_vars:
+        file: ".public_acl_rules.yaml"
+        name: public_acl_rules
+    - name: Set up public subnet ACL
+      ec2_vpc_nacl:
+        vpc_id: "{{ vpc.vpc.id }}"
+        name: Module5-public-acl
+        subnets:
+          - "{{ public_subnet_1.subnet.id }}"
+          - "{{ public_subnet_2.subnet.id }}"
+        ingress: "{{ public_acl_rules['ingress'] }}"
+        egress: "{{ public_acl_rules['egress'] }}"
+        state: present
     - name: Create Developer security group
       ec2_group:
         name: Module5-developer-sg

@@ -34,3 +34,4 @@ build
 
 # MacOS ignores
 .DS_Store
+/Live/.public_acl_rules.yaml
