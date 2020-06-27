@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create the RDS database
+      rds_instance:
+        engine: postgres
+        db_instance_identifier: m5-image-gallery-db
+        instance_type: db.t2.micro
+        db_password: "{{ db_password }}"
+        db_username: "{{ db_username }}"
+        vpc_security_group_ids:
+          - "{{ postgres_sg.group_id }}"
+        allocated_storage: 20
+        storage_type: standard
+        wait: yes
+        state: present

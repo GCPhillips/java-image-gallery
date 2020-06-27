@@ -8,6 +8,10 @@
     group/aws:
       region: "{{ aws_region }}"
   tasks:
+    - name: Load secrets to memory
+      include_vars:
+        file: .secrets.yaml
+        name: secrets
     - name: Create VPC
       ec2_vpc_net:
         name: Module5
@@ -111,10 +115,6 @@
           - [100, 'tcp', 'allow', '10.10.0.0/16', null, null, 1024, 65535]
           - [200, 'tcp', 'allow', '10.10.0.0/16', null, null, 443, 443]
         state: present
-    - name: Grab rules for public subnet ACL from .public_acl_rules.yaml
-      include_vars:
-        file: ".public_acl_rules.yaml"
-        name: public_acl_rules
     - name: Set up public subnet ACL
       ec2_vpc_nacl:
         vpc_id: "{{ vpc.vpc.id }}"
@@ -122,8 +122,8 @@
         subnets:
           - "{{ public_subnet_1.subnet.id }}"
           - "{{ public_subnet_2.subnet.id }}"
-        ingress: "{{ public_acl_rules['ingress'] }}"
-        egress: "{{ public_acl_rules['egress'] }}"
+        ingress: "{{ secrets.public_acl_rules['ingress'] }}"
+        egress: "{{ secrets.public_acl_rules['egress'] }}"
         state: present
     - name: Create Developer security group
       ec2_group:
@@ -194,17 +194,13 @@
             cidr_ip: 0.0.0.0/0
         state: present
       register: nginx_sg
-    - name: Grab rules for development security group from .development_sg_rules.yaml
-      include_vars:
-        file: ".development_sg_rules.yaml"
-        name: development_sg_rules
     - name: Create development security group
       ec2_group:
         name: Module5-development-sg
         description: Used for access from developers
         vpc_id: "{{ vpc.vpc.id }}"
-        rules: "{{ development_sg_rules['rules'] }}"
-        rules_egress: "{{ development_sg_rules['rules_egress'] }}"
+        rules: "{{ secrets.development_sg_rules['rules'] }}"
+        rules_egress: "{{ secrets.development_sg_rules['rules_egress'] }}"
       register: development_sg
     - name: Create endpoint security group
       ec2_group:
