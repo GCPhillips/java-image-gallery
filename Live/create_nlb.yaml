@@ -21,17 +21,33 @@
       include_vars:
         file: ".certificate_arn.yaml"
         name: cert
+    - name: Get first EIP
+      ec2_eip_info:
+        filters:
+          tag:Name: nginx-server-ip-1
+      register: eip_one
+    - name: Get second EIP
+      ec2_eip_info:
+        filters:
+          tag:Name: nginx-server-ip-2
+      register: eip_two
+    - name: Show eip_one info
+      debug: var=eip_one
+    - name: Show eip_two info
+      debug: var=eip_two
     - name: Create Network Load Balancer
       elb_network_lb:
         name: Module5-nlb
-        subnets:
-          - "{{  public_subnet_1.subnet.id }}"
-          - "{{  public_subnet_2.subnet.id }}"
+        subnet_mappings:
+          - SubnetId: "{{  public_subnet_1.subnet.id }}"
+            AllocationId: "{{ eip_one.addresses[0].allocation_id }}"
+          - SubnetId: "{{  public_subnet_2.subnet.id }}"
+            AllocationId: "{{ eip_two.addresses[0].allocation_id }}"
         listeners:
           - Protocol: TLS
             Port: 443
             Certificates:
-              - CertificateArn: "cert['cert']"
+              - CertificateArn: "{{ cert['cert'] }}"
             DefaultActions:
               - Type: forward
                 TargetGroupName: "{{ nlb_tg.target_group_name }}"
@@ -72,7 +88,7 @@
         vpc_zone_identifier:
           - "{{ public_subnet_1.subnet.id }}"
           - "{{ public_subnet_2.subnet.id }}"
-        target_group_arns: "{{ nlb_tg.load_balancer_arns }}"
+        target_group_arns: "{{ nlb_tg.target_group_arn }}"
         health_check_type: ELB
         state: present
 
