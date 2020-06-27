@@ -187,6 +187,7 @@
             to_port: 65535
             cidr_ip: 0.0.0.0/0
         state: present
+      register: nginx_sg
     - name: Grab rules for development security group from .development_sg_rules.yaml
       include_vars:
         file: ".development_sg_rules.yaml"
@@ -198,6 +199,7 @@
         vpc_id: "{{ vpc.vpc.id }}"
         rules: "{{ development_sg_rules['rules'] }}"
         rules_egress: "{{ development_sg_rules['rules_egress'] }}"
+      register: development_sg
     - name: Create endpoint security group
       ec2_group:
         name: Module5-endpoint-sg

@@ -5,15 +5,38 @@
     group/aws:
       region: "us-east-2"
   tasks:
-    - name: NLB Create Target Group
+    - name: Create Target Group
       elb_target_group:
         name: Module5-tg
-        protocol: http
+        protocol: tcp
         port: 80
+        stickiness_enabled: no
+        stickiness_type: source_ip
         vpc_id: "{{ vpc.vpc.id }}"
         state: present
       register: nlb_tg
-    - name: NLB Create Launch Template
+    - name: Show debug for NLB-TG
+      debug: var=nlb_tg
+    - name: Load certificate ARN
+      include_vars:
+        file: ".certificate_arn.yaml"
+        name: cert
+    - name: Create Network Load Balancer
+      elb_network_lb:
+        name: Module5-nlb
+        subnets:
+          - "{{  public_subnet_1.subnet.id }}"
+          - "{{  public_subnet_2.subnet.id }}"
+        listeners:
+          - Protocol: TLS
+            Port: 443
+            Certificates:
+              - CertificateArn: "cert['cert']"
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: "{{ nlb_tg.target_group_name }}"
+        state: present
+    - name: Create Launch Template
       ec2_launch_template:
         name: "Module5_launch_template"
         image_id: "ami-026dea5602e368e96"
@@ -21,6 +44,36 @@
         instance_type: t2.micro
         iam_instance_profile: image-gallery-server-role
         network_interfaces:
-        - associate_public_ip_address: yes
+        - device_index: 0
+          description: Module 5 launch template
+          associate_public_ip_address: yes
           delete_on_termination: yes
+          groups:
+            - "{{ nginx_sg.group_id }}"
+            - "{{ development_sg.group_id }}"
+            - "{{ postgres_tag_sg.group_id }}"
         user_data: "{{ lookup('file', './startup-scripts/ec2_startup.sh') | b64encode }}"
+        tags:
+          Name: Module5-server-asg
+        state: present
+      register: launch_template
+    - name: Create Auto Scaling Group
+      ec2_asg:
+        name: Module5_asg
+        launch_template:
+          version: '$Latest'
+          launch_template_id: "{{ launch_template.latest_template.launch_template_id }}"
+        min_size: 1
+        max_size: 2
+        desired_capacity: 1
+        availability_zones:
+          - "{{ public_subnet_1.subnet.availability_zone }}"
+          - "{{ public_subnet_2.subnet.availability_zone }}"
+        vpc_zone_identifier:
+          - "{{ public_subnet_1.subnet.id }}"
+          - "{{ public_subnet_2.subnet.id }}"
+        target_group_arns: "{{ nlb_tg.load_balancer_arns }}"
+        health_check_type: ELB
+        state: present
+
+        
