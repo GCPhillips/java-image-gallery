@@ -1,17 +1,51 @@
 ---
 - hosts: localhost
   gather_facts: no
+  module_defaults:
+    group/aws:
+      region: us-east-2
   tasks:
-    - name: Create the RDS database
-      rds_instance:
-        engine: postgres
-        db_instance_identifier: m5-image-gallery-db
-        instance_type: db.t2.micro
-        db_password: "{{ db_password }}"
-        db_username: "{{ db_username }}"
-        vpc_security_group_ids:
-          - "{{ postgres_sg.group_id }}"
-        allocated_storage: 20
-        storage_type: standard
-        wait: yes
+#    - name: Create the RDS database
+#      rds_instance:
+#        engine: postgres
+#        db_instance_identifier: m5-image-gallery-db
+#        db_name: m5-image-gallery-db
+#        db_subnet_groups:
+#          db_subnets:
+#            - subnet_identifier: "{{ private_subnet_1.subnet.id }}"
+#            - subnet_identifier: "{{ private_subnet_2.subnet.id }}"
+#        instance_type: db.t2.micro
+#        db_password: "{{ db_password }}"
+#        db_username: "{{ db_username }}"
+#        vpc_security_group_ids:
+#          - "{{ postgres_sg.group_id }}"
+#        allocated_storage: 20
+#        storage_type: standard
+#        wait: yes
+#        state: present
+    - name: Create the RDS subnet group
+      rds_subnet_group:
+        name: m5-private-dbgrp
+        description: "Subnet Group for M5 image gallery db"
+        subnets:
+          - "{{  private_subnet_1.subnet.id }}"
+          - "{{  private_subnet_2.subnet.id }}"
         state: present
+      register: db_group
+    - name: Get Postgres Secret
+      set_fact: dbpassword="{{ lookup('aws_secret', 'm5-db-postgres-pass', region='us-east-2') }}"
+    - name: Show Postgres password
+      debug: var=dbpassword
+    - name: Create the RDS database
+      rds:
+        command: create
+        db_engine: postgres
+        db_name: m5db
+        instance_type: db.t2.micro
+        instance_name: m5-image-gallery-db
+        username: postgres
+        password: "{{ dbpassword.password }}"
+        size: 10
+        subnet: m5-private-dbgrp
+        vpc_security_groups: "{{ postgres_sg.group_id }}"
+      register: db
