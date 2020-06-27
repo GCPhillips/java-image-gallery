@@ -15,8 +15,8 @@
         vpc_id: "{{ vpc.vpc.id }}"
         state: present
       register: nlb_tg
-    - name: Show debug for NLB-TG
-      debug: var=nlb_tg
+ #   - name: Show debug for NLB-TG
+ #     debug: var=nlb_tg
     - name: Get first EIP
       ec2_eip_info:
         filters:
@@ -27,10 +27,10 @@
         filters:
           tag:Name: nginx-server-ip-2
       register: eip_two
-    - name: Show eip_one info
-      debug: var=eip_one
-    - name: Show eip_two info
-      debug: var=eip_two
+ #   - name: Show eip_one info
+ #     debug: var=eip_one
+ #   - name: Show eip_two info
+ #     debug: var=eip_two
     - name: Create Network Load Balancer
       elb_network_lb:
         name: Module5-nlb
@@ -69,9 +69,24 @@
           Name: Module5-server-asg
         state: present
       register: launch_template
+    - name: Gather EC2 info for Auto Scaling Group
+      ec2_instance_info:
+        filters:
+          tag:Name: Module5-server-asg
+          instance-state-name: "running"
+      register: asg_ec2
+    - name: Debug EC2 info
+      debug: var=asg_ec2
+    - name: Grab running EC2s
+      set_fact: running_asg_ec2s="{% for x in asg_ec2.instances %}{{ x.instance_id }}{% endfor %}"
+    - name: Debug EC2s in ASG info
+      debug: var=running_asg_ec2s
     - name: Create Auto Scaling Group
       ec2_asg:
         name: Module5_asg
+        health_check_type: ELB
+        wait_for_instances: False
+        lt_check: yes
         launch_template:
           version: '$Latest'
           launch_template_id: "{{ launch_template.latest_template.launch_template_id }}"
@@ -85,10 +100,4 @@
           - "{{ public_subnet_1.subnet.id }}"
           - "{{ public_subnet_2.subnet.id }}"
         target_group_arns: "{{ nlb_tg.target_group_arn }}"
-        health_check_type: ELB
-        replace_all_instances: yes
-        replace_batch_size: 1
-        wait_for_instances: no
         state: present
-
-        

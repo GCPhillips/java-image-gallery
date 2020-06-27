@@ -30,8 +30,8 @@
         az: "{{ aws_region + 'a' }}"
         state: present
       register: public_subnet_1
-    - name: Debug public subnet
-      debug: var=public_subnet_1
+#    - name: Debug public subnet
+#      debug: var=public_subnet_1
     - name: Create VPC Public Subnet 2
       ec2_vpc_subnet:
         vpc_id: "{{ vpc.vpc.id }}"
@@ -139,9 +139,9 @@
             rule_desc: allow all to ports 22 and 80
         state: present
       register: devsg
-    - name: debug dev-sg
-      debug:
-        var: devsg
+#    - name: debug dev-sg
+#      debug:
+#        var: devsg
     - name: Create postgres-tag security group
       ec2_group:
         name: Module5-postgres-tag-sg
