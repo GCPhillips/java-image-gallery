@@ -125,23 +125,6 @@
         ingress: "{{ secrets.public_acl_rules['ingress'] }}"
         egress: "{{ secrets.public_acl_rules['egress'] }}"
         state: present
-    - name: Create Developer security group
-      ec2_group:
-        name: Module5-developer-sg
-        description: Developer security group
-        vpc_id: "{{ vpc.vpc.id }}"
-        rules:
-          - proto: tcp
-            ports:
-              - 22
-              - 80
-            cidr_ip: 0.0.0.0/0
-            rule_desc: allow all to ports 22 and 80
-        state: present
-      register: devsg
-#    - name: debug dev-sg
-#      debug:
-#        var: devsg
     - name: Create postgres-tag security group
       ec2_group:
         name: Module5-postgres-tag-sg
