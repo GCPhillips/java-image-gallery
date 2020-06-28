@@ -39,7 +39,7 @@ public class DB {
             File file = new File("/home/ec2-user/.dbhostname");
             Scanner scanner = new Scanner(file);
             if (scanner.hasNextLine()) {
-                host = scanner.nextLine();
+                host = "jdbc:postgresql://" + scanner.nextLine() + "/image_gallery";
             }
             scanner.close();
         }
