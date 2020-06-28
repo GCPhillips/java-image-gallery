@@ -95,9 +95,9 @@
         launch_template:
           version: '$Latest'
           launch_template_id: "{{ launch_template.latest_template.launch_template_id }}"
-        min_size: 1
-        max_size: 2
-        desired_capacity: 1
+        min_size: 2
+        max_size: 4
+        desired_capacity: 2
         availability_zones:
           - "{{ public_subnet_1.subnet.availability_zone }}"
           - "{{ public_subnet_2.subnet.availability_zone }}"
