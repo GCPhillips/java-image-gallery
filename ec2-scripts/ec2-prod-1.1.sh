@@ -13,7 +13,7 @@ chown -R ec2-user:ec2-user java-image-gallery
 CONFIG_BUCKET="s3://edu.au.gcp0015.image-gallery-config"
 aws s3 cp ${CONFIG_BUCKET}/nginx/nginx.conf /etc/nginx/nginx.conf
 aws s3 cp ${CONFIG_BUCKET}/nginx/default.d/image_gallery.conf /etc/nginx/default.d/image_gallery.conf
-aws --region "us-east-2" rds describe-db-instances --db-instance-identifier m5-image-gallery-db | jq -r '.DBInstances' | jq - r '.[0].Endpoint.Address' > .dbhostname
+aws --region "us-east-2" rds describe-db-instances --db-instance-identifier m5-image-gallery-db | jq -r '.DBInstances' | jq -r '.[0].Endpoint.Address' > .dbhostname
 
 systemctl stop postfix
 systemctl disable postfix

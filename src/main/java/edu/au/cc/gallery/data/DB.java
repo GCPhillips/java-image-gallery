@@ -36,7 +36,7 @@ public class DB {
     private String getHostname() {
         String host = "";
         try {
-            File file = new File(".dbhostname");
+            File file = new File("/home/ec2-user/.dbhostname");
             Scanner scanner = new Scanner(file);
             if (scanner.hasNextLine()) {
                 host = scanner.nextLine();
