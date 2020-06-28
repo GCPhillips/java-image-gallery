@@ -40,6 +40,11 @@
           - SubnetId: "{{  public_subnet_2.subnet.id }}"
             AllocationId: "{{ eip_two.addresses[0].allocation_id }}"
         listeners:
+          - Protocol: TCP
+            Port: 80
+            DefaultActions:
+              - Type: forward
+                TargetGroupName: "{{ nlb_tg.target_group_name }}"
           - Protocol: TLS
             Port: 443
             Certificates:

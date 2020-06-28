@@ -32,10 +32,9 @@
         vpc_security_groups: "{{ postgres_sg.group_id }}"
       register: db
     - name: Create the temporary EC2 to set up the database
-      # command: yum install -y jq
       ec2:
-        key_name: mint-key
-        group: "{{ development_sg.group_id}}"
+        key_name: mint-tower
+        group: "{{ development_sg.group_name }}"
         instance_type: t3.nano
         image: "ami-026dea5602e368e96"
         instance_tags:
@@ -45,7 +44,16 @@
         vpc_subnet_id: "{{ public_subnet_1.subnet.id }}"
         assign_public_ip: yes
         exact_count: 1
-        user_data: "{{ lookup('file', './startup-scripts/ec2_db_startup.sh }}"
+        count_tag:
+          Name: Module5 Setup
+        user_data: "{{ lookup('file', './startup-scripts/ec2_db_startup.sh') }}"
       register: ec2_db_setup
+    - name: Show EC2 info
+      debug: var=ec2_db_setup
+    - name: Remove temporary EC2
+      ec2:
+        state: 'absent'
+        instance_ids: "{{ ec2_db_setup.instance_ids }}"
+
 
 
