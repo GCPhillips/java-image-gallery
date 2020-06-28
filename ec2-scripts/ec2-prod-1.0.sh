@@ -19,4 +19,6 @@ systemctl disable postfix
 systemctl start nginx
 systemctl enable nginx
 
+exec -l bash
+
 su ec2-user -l -c 'cd ~/java-image-gallery && ./start' > /var/log/image_gallery.log 2>&1 &
