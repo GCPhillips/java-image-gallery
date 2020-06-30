@@ -35,7 +35,7 @@ public class Admin {
                 (req, res) -> addUserForm());
     }
 
-    private static UserDAO getUserDAO() throws Exception {
+    public static UserDAO getUserDAO() throws Exception {
         return Postgres.getUserDAO();
     }
 
