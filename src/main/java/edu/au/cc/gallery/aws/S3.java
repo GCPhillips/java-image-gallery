@@ -1,11 +1,15 @@
 package edu.au.cc.gallery.aws;
 
+import software.amazon.awssdk.core.Response;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 public class S3 {
@@ -45,6 +49,14 @@ public class S3 {
                 .build();
         client.deleteObject(dor);
 
+    }
+
+    public void getObject(String bucketName, String key) {
+        GetObjectRequest gor = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        ResponseBytes<GetObjectResponse> obj = client.getObjectAsBytes(gor);
     }
 
     public static void demo() {

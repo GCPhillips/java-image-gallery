@@ -23,33 +23,33 @@ public class App {
             port(5000);
         else
             port(Integer.parseInt(portString));
-    	addRoutes();
+        addRoutes();
         Admin.addRoutes();
     }
-    
+
     private static void addRoutes() {
-        get("/sessionDemo", (req, res) -> sessionDemo(req, res));    
-        get("/debugSession", (req, res) -> debugSession(req, res));    
+        get("/sessionDemo", (req, res) -> sessionDemo(req, res));
+        get("/debugSession", (req, res) -> debugSession(req, res));
         get("/login", (req, res) -> login(req, res));
         post("/login", (req, res) -> loginPost(req, res));
         before("/user/:username/*", (req, res) -> checkUser(req, res));
+        get("/user/:username", (req, res) -> getUserHome(req, res));
     }
 
     private static String login(Request req, Response resp) {
-       Map<String, Object> model = new HashMap<>(); 
-       return render(model, "login.hbs");       
+        Map<String, Object> model = new HashMap<>();
+        return render(model, "login.hbs");
     }
 
     private static String loginPost(Request req, Response resp) {
         try {
             String username = req.queryParams("username");
             User user = Admin.getUserDAO().getUserByUsername(username);
-            if (user == null || ! user.getPassword().equals(req.queryParams("password")))
+            if (user == null || !user.getPassword().equals(req.queryParams("password")))
                 resp.redirect("/login");
             req.session().attribute("user", username);
             resp.redirect("/debugSession");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
 
@@ -58,10 +58,9 @@ public class App {
 
     private static String sessionDemo(Request req, Response resp) {
         if (req.session().isNew()) {
-            req.session().attribute("value",0); 
-        }
-        else {
-            req.session().attribute("value", (int)req.session().attribute("value") + 1);   
+            req.session().attribute("value", 0);
+        } else {
+            req.session().attribute("value", (int) req.session().attribute("value") + 1);
         }
 
         return "<h1>" + req.session().attribute("value") + "</h1>";
@@ -69,8 +68,8 @@ public class App {
 
     private static String debugSession(Request req, Response resp) {
         StringBuffer sb = new StringBuffer();
-        for(String key: req.session().attributes()) {
-            sb.append(key + "->" + req.session().attribute(key) +"<br />");
+        for (String key : req.session().attributes()) {
+            sb.append(key + "->" + req.session().attribute(key) + "<br />");
         }
         return sb.toString();
     }
@@ -79,11 +78,30 @@ public class App {
         return username != null && currentUser != null && username.equals(currentUser);
     }
 
-    private static void checkUser(Request req, Response res) {
-        if (!isUser(req.session().attribute("user"), req.params("username"))) {
-            res.redirect("/login");
-            halt();
+    private static String checkUser(Request req, Response res) {
+        String currentUser = req.session().attribute("user");
+        try {
+            if (!isUser(req.params("username"), currentUser)) {
+                if (currentUser != null && Admin.getUserDAO().getUserByUsername(currentUser) != null) {
+                    res.redirect("/user/" + currentUser);
+                } else
+                    res.redirect("/login");
+                halt();
+                return "";
+            }
+        } catch (Exception ex) {
+            return "[ERR]: " + ex.getMessage();
         }
+
+        return "";
+    }
+
+    private static String getUserHome(Request req, Response res) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", req.params("username"));
+        // TODO: put a list of images from S3 into model
+        // TODO: create the template for userhome
+        return render(model, "userhome.hbs");
     }
 
     public static String render(Map<String, Object> model, String templatePath) {
