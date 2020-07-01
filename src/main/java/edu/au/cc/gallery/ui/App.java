@@ -3,10 +3,7 @@
  */
 package edu.au.cc.gallery.ui;
 
-import edu.au.cc.gallery.data.Postgres;
-import edu.au.cc.gallery.data.UserDAO;
 import edu.au.cc.gallery.data.User;
-import edu.au.cc.gallery.ui.Admin;
 
 import static spark.Spark.*;
 
@@ -17,8 +14,6 @@ import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
 
 public class App {
 
@@ -37,6 +32,7 @@ public class App {
         get("/debugSession", (req, res) -> debugSession(req, res));    
         get("/login", (req, res) -> login(req, res));
         post("/login", (req, res) -> loginPost(req, res));
+        before("/user/:username/*", (req, res) -> checkUser(req, res));
     }
 
     private static String login(Request req, Response resp) {
@@ -77,6 +73,17 @@ public class App {
             sb.append(key + "->" + req.session().attribute(key) +"<br />");
         }
         return sb.toString();
+    }
+
+    private static boolean isUser(String username, String currentUser) {
+        return username != null && currentUser != null && username.equals(currentUser);
+    }
+
+    private static void checkUser(Request req, Response res) {
+        if (!isUser(req.session().attribute("user"), req.params("username"))) {
+            res.redirect("/login");
+            halt();
+        }
     }
 
     public static String render(Map<String, Object> model, String templatePath) {
