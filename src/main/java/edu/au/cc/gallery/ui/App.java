@@ -6,6 +6,7 @@ package edu.au.cc.gallery.ui;
 import edu.au.cc.gallery.data.Postgres;
 import edu.au.cc.gallery.data.UserDAO;
 import edu.au.cc.gallery.data.User;
+import edu.au.cc.gallery.ui.Admin;
 
 import static spark.Spark.*;
 
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class App {
-    private static final String homePage = "/admin/users";
 
     public static void main(String[] args) throws Exception {
         String portString = System.getenv("JETTY_PORT");
@@ -28,124 +28,58 @@ public class App {
             port(5000);
         else
             port(Integer.parseInt(portString));
-        addRoutes();
+    	addRoutes();
+        Admin.addRoutes();
     }
-
+    
     private static void addRoutes() {
-        get(homePage, (res, req) -> listUsers());
-        get("/admin/users/:username",
-                (req, res) -> getUser(req.params(":username")));
-        post("/admin/adduser",
-                (req, res) -> addUser(req.queryParams("name"), req.queryParams("pass"), req.queryParams("fullname"), res));
-        post("/admin/deleteuserform",
-                (req, res) -> deleteUserForm(req.queryParams("name"), req));
-        post("/admin/deleteuser",
-                (req, res) -> deleteUser(req.queryParams("name"), res));
-        post("/admin/edituserform",
-                (req, res) -> editUserForm(req.queryParams("name"), req));
-        post("/admin/edituser",
-                (req, res) -> editUser(req.queryParams("name"), req, res));
-        post("/admin/adduserform",
-                (req, res) -> addUserForm());
+        get("/sessionDemo", (req, res) -> sessionDemo(req, res));    
+        get("/debugSession", (req, res) -> debugSession(req, res));    
+        get("/login", (req, res) -> login(req, res));
+        post("/login", (req, res) -> loginPost(req, res));
     }
 
-    private static UserDAO getUserDAO() throws Exception {
-        return Postgres.getUserDAO();
+    private static String login(Request req, Response resp) {
+       Map<String, Object> model = new HashMap<>(); 
+       return render(model, "login.hbs");       
     }
 
-    private static String listUsers() {
+    private static String loginPost(Request req, Response resp) {
         try {
-            Map<String, Object> model = new HashMap<>();
-            List<Map<String, Object>> users = new ArrayList<>();
-            UserDAO dao = getUserDAO();
-            for (User u: dao.getUsers()) {
-                Map<String, Object> userInfo = new HashMap<>();
-                userInfo.put("name", u.getUsername());
-                userInfo.put("pass", u.getPassword());
-                userInfo.put("fullname", u.getFullName());
-                users.add(userInfo);
-            }
-            model.put("users", users);
-            return render(model, "userlist.hbs");
-        } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
-        }
-    }
-
-    private static String getUser(String username) {
-        try {
-            UserDAO dao = getUserDAO();
-            return dao.getUserByUsername(username).toString();
-        } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
-        }
-    }
-
-    private static String addUserForm() {
-        return render(null, "adduserform.hbs");
-    }
-
-    private static String addUser(String username, String password, String fullName, Response r) {
-        try {
-            UserDAO dao = getUserDAO();
-            dao.addUser(new User(username, password, fullName));
-            r.redirect(homePage);
-            return "";
-        } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
-        }
-    }
-
-    private static String deleteUserForm(String username, Request req) {
-        try {
-            Map<String, Object> model = new HashMap<>();
-            model.put("name", req.queryParams("name"));
-            return render(model, "deleteuserform.hbs");
+            String username = req.queryParams("username");
+            User user = Admin.getUserDAO().getUserByUsername(username);
+            if (user == null || ! user.getPassword().equals(req.queryParams("password")))
+                resp.redirect("/login");
+            req.session().attribute("user", username);
+            resp.redirect("/debugSession");
         }
         catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
+
+        return "";
     }
 
-    private static String deleteUser(String username, Response r) {
-        try {
-            UserDAO dao = getUserDAO();
-            dao.deleteUser(dao.getUserByUsername(username));
-            r.redirect(homePage);
-            return "";
+    private static String sessionDemo(Request req, Response resp) {
+        if (req.session().isNew()) {
+            req.session().attribute("value",0); 
         }
-        catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+        else {
+            req.session().attribute("value", (int)req.session().attribute("value") + 1);   
         }
+
+        return "<h1>" + req.session().attribute("value") + "</h1>";
     }
 
-    private static String editUserForm(String username, Request req) {
-        try {
-            Map<String, Object> model = new HashMap<>();
-            model.put("name", req.queryParams("name"));
-            return render(model, "edituserform.hbs");
+    private static String debugSession(Request req, Response resp) {
+        StringBuffer sb = new StringBuffer();
+        for(String key: req.session().attributes()) {
+            sb.append(key + "->" + req.session().attribute(key) +"<br />");
         }
-        catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
-        }
+        return sb.toString();
     }
 
-    private static String editUser(String username, Request req, Response r) {
-        try {
-            UserDAO dao = getUserDAO();
-            User userToEdit = dao.getUserByUsername(username);
-            userToEdit.setFullName(req.queryParams("fullname"));
-            userToEdit.setPassword(req.queryParams("pass"));
-            dao.editUser(userToEdit);
-            r.redirect(homePage);
-            return "";
-        }
-        catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
-        }
-    }
-
-    private static String render(Map<String, Object> model, String templatePath) {
+    public static String render(Map<String, Object> model, String templatePath) {
         return new HandlebarsTemplateEngine()
                 .render(new ModelAndView(model, templatePath));
     }
