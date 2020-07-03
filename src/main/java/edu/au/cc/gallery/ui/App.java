@@ -3,10 +3,7 @@
  */
 package edu.au.cc.gallery.ui;
 
-import edu.au.cc.gallery.data.ImageDAO;
-import edu.au.cc.gallery.data.ListImageFactory;
-import edu.au.cc.gallery.data.Image;
-import edu.au.cc.gallery.data.User;
+import edu.au.cc.gallery.data.*;
 
 import static spark.Spark.*;
 
@@ -47,7 +44,7 @@ public class App {
     }
 
     public static ImageDAO getImageDAO() throws Exception {
-        return ListImageFactory.getImageDAO();
+        return S3ImageFactory.getImageDAO();
     }
 
     private static String login(Request req, Response resp) {

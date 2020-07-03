@@ -45,4 +45,9 @@ public class PostgresUserDAO implements UserDAO {
         connection.execute("update users set password=?, fullname=? where username=?",
                 new String[]{u.getPassword(), u.getFullName(), u.getUsername()});
     }
+
+    public void addImage(User u, Image i) throws SQLException {
+        connection.execute("insert into images(imageid, username) values (?,?)",
+                new String[]{i.getUuid(), u.getUsername()});
+    }
 }

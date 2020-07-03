@@ -16,10 +16,10 @@ public class ListImageDAO implements ImageDAO {
     }
 
     @Override
-    public Image getImage(User user, String uuid) throws Exception {
+    public Image getImage(User user, String name) throws Exception {
         var userImages = images.get(user);
         for (Image image: userImages) {
-            if (image.getUuid().equals(uuid))
+            if (image.getName().equals(name))
                 return image;
         }
         return null;

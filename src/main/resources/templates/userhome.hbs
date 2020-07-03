@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Images for {{user}}</title>
+    <title>Images for {{username}}</title>
     <meta charset="utf-8"/>
   </head>
   <body>
       {{#each images}}
-      <div class="image"> {{imagedata}} </div>
+      <div class="image">
+        <img> src="{{imagedata}}"/>
+      </div>
       <form action="/user/{{username}}/images/{{uuid}}" method="DELETE">
         <button type="submit" name="deleteimage" value={{uuid}}
       </form>

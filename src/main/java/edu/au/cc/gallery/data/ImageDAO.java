@@ -12,7 +12,7 @@ public interface ImageDAO {
     /**
      * @return gets the image (if it exists) based on the uuid
      */
-    Image getImage(User user, String uuid) throws Exception;
+    Image getImage(User user, String name) throws Exception;
 
     /**
      * Add an image
