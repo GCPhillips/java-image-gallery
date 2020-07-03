@@ -4,7 +4,7 @@
 package edu.au.cc.gallery.ui;
 
 import edu.au.cc.gallery.data.ImageDAO;
-import edu.au.cc.gallery.data.ListImagesFactory;
+import edu.au.cc.gallery.data.ListImageFactory;
 import edu.au.cc.gallery.data.Image;
 import edu.au.cc.gallery.data.User;
 
@@ -45,7 +45,7 @@ public class App {
     }
 
     public static ImageDAO getImageDAO() throws Exception {
-        return ListImagesFactory.getImageDAO();
+        return ListImageFactory.getImageDAO();
     }
 
     private static String login(Request req, Response resp) {
@@ -131,11 +131,10 @@ public class App {
 
     private static String addImage(Request req, Response res) {
         String username = req.queryParams("username");
-        String uuid = req.queryParams("uuid");
-        String imageData = req.queryParams("image");
+        String imageData = req.queryParams("imagedata");
         try {
             User user = Admin.getUserDAO().getUserByUsername(username);
-            Image image = new Image(user, uuid, imageData);
+            Image image = new Image(user, "", imageData);
             getImageDAO().addImage(user, image);
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
