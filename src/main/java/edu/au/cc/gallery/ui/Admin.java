@@ -1,6 +1,6 @@
 package edu.au.cc.gallery.ui;
 
-import edu.au.cc.gallery.data.Postgres;
+import edu.au.cc.gallery.data.PostgresFactory;
 import edu.au.cc.gallery.data.User;
 import edu.au.cc.gallery.data.UserDAO;
 import spark.Request;
@@ -41,7 +41,7 @@ public class Admin {
     }
 
     public static UserDAO getUserDAO() throws Exception {
-        return Postgres.getUserDAO();
+        return PostgresFactory.getUserDAO();
     }
 
     private static String listUsers() {

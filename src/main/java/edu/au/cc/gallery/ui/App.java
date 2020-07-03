@@ -4,7 +4,7 @@
 package edu.au.cc.gallery.ui;
 
 import edu.au.cc.gallery.data.ImageDAO;
-import edu.au.cc.gallery.data.ListImages;
+import edu.au.cc.gallery.data.ListImagesFactory;
 import edu.au.cc.gallery.data.Image;
 import edu.au.cc.gallery.data.User;
 
@@ -42,7 +42,7 @@ public class App {
     }
 
     public static ImageDAO getImageDAO() throws Exception {
-        return ListImages.getImageDAO();
+        return ListImagesFactory.getImageDAO();
     }
 
     private static String login(Request req, Response resp) {
