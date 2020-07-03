@@ -7,17 +7,17 @@
   <body>
       {{#each images}}
       <div class="image">
-        <img> src="{{imagedata}}"/>
+        <img src="data:image/png;base64,{{imagedata}}"/>
       </div>
-      <form action="/user/{{username}}/images/{{uuid}}" method="DELETE">
-        <button type="submit" name="deleteimage" value={{uuid}}
+      <form action="/user/{{username}}/images/{{uuid}}" method="POST">
+        <button type="submit" name="deleteimage" value="{{uuid}}"></button>
       </form>
       {{/each}}
       <hr>
       <div class="addform">
-        <form action="/user/{{username}}/images" method="POST">
+        <form action="/user/{{username}}/images" method="POST" enctype="multipart/form-data">
           <label for="img">Add Image:</label>
-          <input type="file" id="imagedata" name="imagedata" accept="image/*">
+          <input type="file" name="imagedata" accept="image/*">
           <input type="submit">
         </form>
       </div>

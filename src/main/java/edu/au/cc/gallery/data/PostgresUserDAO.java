@@ -50,4 +50,20 @@ public class PostgresUserDAO implements UserDAO {
         connection.execute("insert into images(imageid, username) values (?,?)",
                 new String[]{i.getUuid(), u.getUsername()});
     }
+
+    public List<String> getImageUuids(User u) throws SQLException {
+        List<String> uuids = new ArrayList<>();
+        ResultSet rs = connection.executeQuery("select imageid from images where username=?",
+                new String[] { u.getUsername()});
+        while (rs.next()) {
+            uuids.add(rs.getString(1));
+        }
+
+        return uuids;
+    }
+
+    public void deleteImage(User u, Image i) throws SQLException {
+        connection.execute("delete from images where username=? and imageid=?",
+                new String[] {u.getUsername(), i.getUuid()});
+    }
 }

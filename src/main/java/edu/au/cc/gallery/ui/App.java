@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Base64;
 import java.io.InputStream;
 
 public class App {
@@ -41,7 +42,7 @@ public class App {
         get("/user/:username/images", (req, res) -> getUserHome(req, res));
         post("/user/:username/images", (req, res) -> addImage(req, res));
         get("/user/:username/images/:uuid", (req, res) -> getImage(req, res));
-        delete("/user/:username/images/:uuid", (req, res) -> deleteImage(req, res));
+        post("/user/:username/images/:uuid", (req, res) -> deleteImage(req, res));
     }
 
     public static ImageDAO getImageDAO() throws Exception {
@@ -128,14 +129,15 @@ public class App {
     }
 
     private static String addImage(Request req, Response res) {
-        String username = req.queryParams("username");
+        String username = req.params("username");
         try {
             req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
             InputStream inputStream = req.raw().getPart("imagedata").getInputStream();
             byte[] imageData = inputStream.readAllBytes();
+            String imageDataString = Base64.getEncoder().encodeToString(imageData);
             User user = Admin.getUserDAO().getUserByUsername(username);
             String uuid = UUID.randomUUID().toString();
-            Image image = new Image(user, uuid, imageData);
+            Image image = new Image(user, uuid, imageDataString);
             getImageDAO().addImage(user, image);
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
@@ -147,9 +149,9 @@ public class App {
 
     private static String deleteImage(Request req, Response res) {
         try {
-            String username = req.queryParams("username");
+            String username = req.params("username");
             User user = Admin.getUserDAO().getUserByUsername(username);
-            String uuid = req.queryParams("uuid");
+            String uuid = req.params("uuid");
             Image image = getImageDAO().getImage(user, uuid);
             if (image == null)
                 return "";

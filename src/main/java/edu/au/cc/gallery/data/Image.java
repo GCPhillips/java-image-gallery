@@ -2,21 +2,21 @@ package edu.au.cc.gallery.data;
 
 public class Image {
     private User user;
-    private byte[] imageData;
+    private String imageData;
     private String uuid;
 
 
-    public Image(User user, String uuid, byte[] imageData) {
+    public Image(User user, String uuid, String imageData) {
         this.user = user;
         this.uuid = uuid;
         this.imageData = imageData;
     }
 
-    public byte[] getImageData() {
+    public String getImageData() {
         return imageData;
     }
 
-    public void setImageData(byte[] imageData) {
+    public void setImageData(String imageData) {
         this.imageData = imageData;
     }
 

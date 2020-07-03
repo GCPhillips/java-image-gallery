@@ -33,14 +33,14 @@ public class S3 {
         client.createBucket(createBucketRequest);
     }
 
-    public void putObject(String bucketName, String key, byte[] value, String contentType) {
+    public void putObject(String bucketName, String key, String value, String contentType) {
         PutObjectRequest por = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .contentType(contentType)
                 .build();
 
-        client.putObject(por, RequestBody.fromBytes(value));
+        client.putObject(por, RequestBody.fromString(value));
 
     }
 
@@ -53,14 +53,14 @@ public class S3 {
 
     }
 
-    public byte[] getObject(String bucketName, String key) {
+    public String getObject(String bucketName, String key) {
         GetObjectRequest gor = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
         try {
             ResponseInputStream<GetObjectResponse> response = client.getObject(gor);
-            return response.readAllBytes();
+            return new String(response.readAllBytes(), "UTF-8");
         }
         catch (Exception ex) {
             System.out.println("[ERR]: " + ex.getMessage());
