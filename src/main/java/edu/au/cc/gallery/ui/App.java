@@ -3,6 +3,9 @@
  */
 package edu.au.cc.gallery.ui;
 
+import edu.au.cc.gallery.data.ImageDAO;
+import edu.au.cc.gallery.data.ListImages;
+import edu.au.cc.gallery.data.Image;
 import edu.au.cc.gallery.data.User;
 
 import static spark.Spark.*;
@@ -33,7 +36,13 @@ public class App {
         get("/login", (req, res) -> login(req, res));
         post("/login", (req, res) -> loginPost(req, res));
         before("/user/:username/*", (req, res) -> checkUser(req, res));
-        get("/user/:username", (req, res) -> getUserHome(req, res));
+        get("/user/:username/images", (req, res) -> getUserHome(req, res));
+        post("/user/:username/images", (req, res) -> addImage(req, res));
+        get("/user/:username/images/:image", (req, res) -> getImage(req, res));
+    }
+
+    public static ImageDAO getImageDAO() throws Exception {
+        return ListImages.getImageDAO();
     }
 
     private static String login(Request req, Response resp) {
@@ -102,6 +111,37 @@ public class App {
         // TODO: put a list of images from S3 into model
         // TODO: create the template for userhome
         return render(model, "userhome.hbs");
+    }
+
+    private static String addImage(Request req, Response res) {
+        String username = req.queryParams("username");
+        String uuid = req.queryParams("uuid");
+        String imageData = req.queryParams("image");
+        try {
+            User user = Admin.getUserDAO().getUserByUsername(username);
+            Image image = new Image(user, uuid, imageData);
+            getImageDAO().addImage(user, image);
+        } catch (Exception ex) {
+            return "[ERR]: " + ex.getMessage();
+        }
+
+        res.redirect("/user/" + username + "/images");
+        return "";
+    }
+
+    private static String getImage(Request req, Response res) {
+        Map<String, Object> model = new HashMap<>();
+        String username = req.params("username");
+        String uuid = req.params("uuid");
+        model.put("user", username);
+        model.put("uuid", uuid);
+        try {
+            User user = Admin.getUserDAO().getUserByUsername(username);
+            Image image = getImageDAO().getImage(user, uuid);
+        } catch (Exception ex){
+            return "[ERR]: " + ex.getMessage();
+        }
+        return render(model, "singleimage.hbs");
     }
 
     public static String render(Map<String, Object> model, String templatePath) {
