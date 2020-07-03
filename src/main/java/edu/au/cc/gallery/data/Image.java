@@ -3,13 +3,13 @@ package edu.au.cc.gallery.data;
 public class Image {
     private String uuid;
     private User user;
-    private String image;
+    private String imageData;
 
 
-    public Image(User user, String uuid, String image) {
+    public Image(User user, String uuid, String imageData) {
         this.user = user;
         this.uuid = uuid;
-        this.image = image;
+        this.imageData = imageData;
     }
 
     public String getUuid() {
@@ -20,12 +20,12 @@ public class Image {
         this.uuid = uuid;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageData() {
+        return imageData;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageData(String imageData) {
+        this.imageData = imageData;
     }
 
     public User getUser() {

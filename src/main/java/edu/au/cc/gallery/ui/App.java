@@ -138,6 +138,7 @@ public class App {
         try {
             User user = Admin.getUserDAO().getUserByUsername(username);
             Image image = getImageDAO().getImage(user, uuid);
+            model.put("image", image.getImageData());
         } catch (Exception ex){
             return "[ERR]: " + ex.getMessage();
         }
