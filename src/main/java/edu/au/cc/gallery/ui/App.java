@@ -15,10 +15,12 @@ import spark.Request;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
+import javax.servlet.MultipartConfigElement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.InputStream;
 
 public class App {
 
@@ -60,7 +62,7 @@ public class App {
             if (user == null || !user.getPassword().equals(req.queryParams("password")))
                 resp.redirect("/login");
             req.session().attribute("user", username);
-            resp.redirect("/debugSession");
+            resp.redirect("/user/" + username + "/images");
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
@@ -91,20 +93,16 @@ public class App {
     }
 
     private static String checkUser(Request req, Response res) {
-        String currentUser = req.session().attribute("user");
         try {
-            if (!isUser(req.params("username"), currentUser)) {
-                if (currentUser != null && Admin.getUserDAO().getUserByUsername(currentUser) != null) {
-                    res.redirect("/user/" + currentUser);
-                } else
-                    res.redirect("/login");
+            String username = req.params("username");
+            User currentUser = Admin.getUserDAO().getUserByUsername(username);
+            if (!isUser(req.session().attribute("user"), username) || currentUser == null) {
+                res.redirect("/login");
                 halt();
-                return "";
             }
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
-
         return "";
     }
 
@@ -115,14 +113,16 @@ public class App {
             String username = req.params("username");
             User user = Admin.getUserDAO().getUserByUsername(username);
             List<Image> userImages = getImageDAO().getImages(user);
-            for (Image i: userImages) {
-                Map<String, Object> imageInfo = new HashMap<>();
-                imageInfo.put("imagedata", i.getImageData());
-                imageInfo.put("uuid", i.getUuid());
-                images.add(imageInfo);
+            if (userImages != null) {
+                for (Image i : userImages) {
+                    Map<String, Object> imageInfo = new HashMap<>();
+                    imageInfo.put("imagedata", i.getImageData());
+                    imageInfo.put("uuid", i.getUuid());
+                    images.add(imageInfo);
+                }
+                model.put("username", user.getUsername());
+                model.put("images", images);
             }
-            model.put("username", user.getUsername());
-            model.put("images", images);
             return render(model, "userhome.hbs");
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
@@ -131,10 +131,13 @@ public class App {
 
     private static String addImage(Request req, Response res) {
         String username = req.queryParams("username");
-        String imageData = req.queryParams("imagedata");
         try {
+            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
+            InputStream inputStream = req.raw().getPart("imagedata").getInputStream();
+            byte[] imageData = inputStream.readAllBytes();
             User user = Admin.getUserDAO().getUserByUsername(username);
             Image image = new Image(user, "", imageData);
+
             getImageDAO().addImage(user, image);
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
