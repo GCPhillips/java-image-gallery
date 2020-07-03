@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 public class S3 {
@@ -32,10 +33,11 @@ public class S3 {
         client.createBucket(createBucketRequest);
     }
 
-    public void putObject(String bucketName, String key, byte[] value) {
+    public void putObject(String bucketName, String key, byte[] value, String contentType) {
         PutObjectRequest por = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
+                .contentType(contentType)
                 .build();
 
         client.putObject(por, RequestBody.fromBytes(value));
@@ -51,12 +53,20 @@ public class S3 {
 
     }
 
-    public void getObject(String bucketName, String key) {
+    public byte[] getObject(String bucketName, String key) {
         GetObjectRequest gor = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
-        ResponseBytes<GetObjectResponse> obj = client.getObjectAsBytes(gor);
+        try {
+            ResponseInputStream<GetObjectResponse> response = client.getObject(gor);
+            return response.readAllBytes();
+        }
+        catch (Exception ex) {
+            System.out.println("[ERR]: " + ex.getMessage());
+        }
+
+        return null;
     }
 
     public static void demo() {

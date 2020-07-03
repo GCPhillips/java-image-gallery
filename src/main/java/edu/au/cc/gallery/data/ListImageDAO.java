@@ -19,7 +19,7 @@ public class ListImageDAO implements ImageDAO {
     public Image getImage(User user, String name) throws Exception {
         var userImages = images.get(user);
         for (Image image: userImages) {
-            if (image.getName().equals(name))
+            if (image.getUuid().equals(name))
                 return image;
         }
         return null;

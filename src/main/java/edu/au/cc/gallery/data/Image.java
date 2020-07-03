@@ -1,24 +1,15 @@
 package edu.au.cc.gallery.data;
 
 public class Image {
-    private String name;
     private User user;
     private byte[] imageData;
     private String uuid;
 
 
-    public Image(User user, String name, byte[] imageData) {
+    public Image(User user, String uuid, byte[] imageData) {
         this.user = user;
-        this.name = name;
+        this.uuid = uuid;
         this.imageData = imageData;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public byte[] getImageData() {
@@ -37,7 +28,11 @@ public class Image {
         this.user = user;
     }
 
-    public String getUuid() { return uuid; }
+    public String getUuid() {
+        return uuid;
+    }
 
-    public void setUuid(String uuid) { this.uuid = uuid; }
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }

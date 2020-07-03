@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.io.InputStream;
 
 public class App {
@@ -109,6 +110,7 @@ public class App {
             List<Map<String, Object>> images = new ArrayList<>();
             String username = req.params("username");
             User user = Admin.getUserDAO().getUserByUsername(username);
+            model.put("username", user.getUsername());
             List<Image> userImages = getImageDAO().getImages(user);
             if (userImages != null) {
                 for (Image i : userImages) {
@@ -117,7 +119,6 @@ public class App {
                     imageInfo.put("uuid", i.getUuid());
                     images.add(imageInfo);
                 }
-                model.put("username", user.getUsername());
                 model.put("images", images);
             }
             return render(model, "userhome.hbs");
@@ -133,8 +134,8 @@ public class App {
             InputStream inputStream = req.raw().getPart("imagedata").getInputStream();
             byte[] imageData = inputStream.readAllBytes();
             User user = Admin.getUserDAO().getUserByUsername(username);
-            Image image = new Image(user, "", imageData);
-
+            String uuid = UUID.randomUUID().toString();
+            Image image = new Image(user, uuid, imageData);
             getImageDAO().addImage(user, image);
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();

@@ -5,6 +5,7 @@ import edu.au.cc.gallery.aws.*;
 import edu.au.cc.gallery.ui.*;
 
 public class S3ImageDAO implements ImageDAO {
+    private String bucketBase = "edu.au.gcp0015.image-gallery";
     @Override
     public List<Image> getImages(User user) throws Exception {
         return null;
@@ -21,8 +22,7 @@ public class S3ImageDAO implements ImageDAO {
         try {
             s3.connect();
             if (Admin.getUserDAO().getUserByUsername(user.getUsername()) != null) {
-                String path = "/images/" + user.getUsername() + "/" + image.getName();
-                s3.putObject(path, image.getUuid(), image.getImageData());
+                s3.putObject(bucketBase, image.getUuid(), image.getImageData(), "image/image");
                 Admin.getUserDAO().addImage(user, image);
             }
         }
