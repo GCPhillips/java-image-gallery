@@ -17,6 +17,8 @@ import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class App {
 
@@ -38,7 +40,8 @@ public class App {
         before("/user/:username/*", (req, res) -> checkUser(req, res));
         get("/user/:username/images", (req, res) -> getUserHome(req, res));
         post("/user/:username/images", (req, res) -> addImage(req, res));
-        get("/user/:username/images/:image", (req, res) -> getImage(req, res));
+        get("/user/:username/images/:uuid", (req, res) -> getImage(req, res));
+        delete("/user/:username/images/:uuid", (req, res) -> deleteImage(req, res));
     }
 
     public static ImageDAO getImageDAO() throws Exception {
@@ -106,11 +109,24 @@ public class App {
     }
 
     private static String getUserHome(Request req, Response res) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("user", req.params("username"));
-        // TODO: put a list of images from S3 into model
-        // TODO: create the template for userhome
-        return render(model, "userhome.hbs");
+        try {
+            Map<String, Object> model = new HashMap<>();
+            List<Map<String, Object>> images = new ArrayList<>();
+            String username = req.params("username");
+            User user = Admin.getUserDAO().getUserByUsername(username);
+            List<Image> userImages = getImageDAO().getImages(user);
+            for (Image i: userImages) {
+                Map<String, Object> imageInfo = new HashMap<>();
+                imageInfo.put("imagedata", i.getImageData());
+                imageInfo.put("username", user.getUsername());
+                imageInfo.put("uuid", i.getUuid());
+                images.add(imageInfo);
+            }
+            model.put("images", images);
+            return render(model, "userhome.hbs");
+        } catch (Exception ex) {
+            return "[ERR]: " + ex.getMessage();
+        }
     }
 
     private static String addImage(Request req, Response res) {
@@ -129,11 +145,26 @@ public class App {
         return "";
     }
 
+    private static String deleteImage(Request req, Response res) {
+        try {
+            String username = req.queryParams("username");
+            User user = Admin.getUserDAO().getUserByUsername(username);
+            String uuid = req.queryParams("uuid");
+            Image image = getImageDAO().getImage(user, uuid);
+            if (image == null)
+                return "";
+            getImageDAO().deleteImage(user, image);
+        } catch (Exception ex) {
+            return "[ERR]: " + ex.getMessage();
+        }
+        return "";
+    }
+
     private static String getImage(Request req, Response res) {
         Map<String, Object> model = new HashMap<>();
         String username = req.params("username");
         String uuid = req.params("uuid");
-        model.put("user", username);
+        model.put("username", username);
         model.put("uuid", uuid);
         try {
             User user = Admin.getUserDAO().getUserByUsername(username);

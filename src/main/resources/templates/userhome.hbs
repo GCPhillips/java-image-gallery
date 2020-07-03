@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Images for {{user}}</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+      {{#each images}}
+      <div action="/user/{{username}}/images/{{uuid}}" class="image"> {{imagedata}} </div>
+      <form action="DELETE">
+        <button type="submit" name="deleteimage" value={{uuid}}
+      </form>
+      {{/each}}
+  </body>
+</html>
