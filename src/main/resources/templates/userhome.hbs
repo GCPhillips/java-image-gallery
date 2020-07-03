@@ -6,10 +6,18 @@
   </head>
   <body>
       {{#each images}}
-      <div action="/user/{{username}}/images/{{uuid}}" class="image"> {{imagedata}} </div>
-      <form action="DELETE">
+      <div class="image"> {{imagedata}} </div>
+      <form action="/user/{{username}}/images/{{uuid}}" method="DELETE">
         <button type="submit" name="deleteimage" value={{uuid}}
       </form>
       {{/each}}
+      <hr>
+      <div class="addform">
+        <form action="/user/{{username}}/images" method="POST">
+          <label for="img">Add Image:</label>
+          <input type="file" id="imagedata" name="imagedata" accept="image/*">
+          <input type="submit">
+        </form>
+      </div>
   </body>
 </html>

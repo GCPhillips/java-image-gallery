@@ -118,10 +118,10 @@ public class App {
             for (Image i: userImages) {
                 Map<String, Object> imageInfo = new HashMap<>();
                 imageInfo.put("imagedata", i.getImageData());
-                imageInfo.put("username", user.getUsername());
                 imageInfo.put("uuid", i.getUuid());
                 images.add(imageInfo);
             }
+            model.put("username", user.getUsername());
             model.put("images", images);
             return render(model, "userhome.hbs");
         } catch (Exception ex) {
