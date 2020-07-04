@@ -169,6 +169,7 @@ public class App {
             if (image == null)
                 return "";
             getImageDAO().deleteImage(user, image);
+            res.redirect("/user/" + username + "/images");
         } catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
         }
