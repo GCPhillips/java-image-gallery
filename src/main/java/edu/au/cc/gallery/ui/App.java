@@ -25,6 +25,23 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         String portString = System.getenv("JETTY_PORT");
+        String pg_host = System.getenv("PG_HOST");
+        int pg_port = Integer.getInteger(System.getenv("PG_PORT"));
+        String ig_database = System.getenv("IG_DATABASE");
+        String ig_user = System.getenv("IG_USER");
+        String ig_passwd = System.getenv("IG_PASSWD");
+        String ig_passwd_file = System.getenv("IG_PASSWD_FILE");
+        String s3_image_bucket = System.getenv("S3_IMAGE_BUCKET");
+
+        DB.setHostname(pg_host);
+        DB.setIg_password(ig_passwd);
+        if (ig_passwd_file != null || !ig_passwd_file.equals(""))
+            DB.setIg_password(ig_passwd_file);
+        DB.setIg_user(ig_user);
+        DB.setIg_database(ig_database);
+        DB.setPg_port(pg_port);
+        S3ImageDAO.setBucketname(s3_image_bucket);
+
         if (portString == null || portString.equals(""))
             port(5000);
         else

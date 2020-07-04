@@ -6,7 +6,11 @@ import edu.au.cc.gallery.aws.*;
 import edu.au.cc.gallery.ui.*;
 
 public class S3ImageDAO implements ImageDAO {
-    private String bucketBase = "edu.au.gcp0015.image-gallery";
+    private static String bucketname;
+
+    public static void setBucketname(String bucketName) {
+        bucketname = bucketName;
+    }
 
     @Override
     public List<Image> getImages(User user) throws Exception {
@@ -16,7 +20,7 @@ public class S3ImageDAO implements ImageDAO {
             s3.connect();
             List<String> uuids = Admin.getUserDAO().getImageUuids(user);
             for (String uuid: uuids) {
-                String imagedata = s3.getObject(bucketBase, uuid);
+                String imagedata = s3.getObject(bucketname, uuid);
                 Image image = new Image(user, uuid, imagedata);
                 images.add(image);
             }
@@ -33,7 +37,7 @@ public class S3ImageDAO implements ImageDAO {
         S3 s3 = new S3();
         try {
             s3.connect();
-            String imagedata = s3.getObject(bucketBase, uuid);
+            String imagedata = s3.getObject(bucketname, uuid);
             Image image = new Image(user, uuid, imagedata);
             return image;
         }
@@ -51,7 +55,7 @@ public class S3ImageDAO implements ImageDAO {
         try {
             s3.connect();
             if (Admin.getUserDAO().getUserByUsername(user.getUsername()) != null) {
-                s3.putObject(bucketBase, image.getUuid(), image.getImageData(), "image/image");
+                s3.putObject(bucketname, image.getUuid(), image.getImageData(), "image/image");
                 Admin.getUserDAO().addImage(user, image);
             }
         }
@@ -68,7 +72,7 @@ public class S3ImageDAO implements ImageDAO {
         try {
             s3.connect();
             if (Admin.getUserDAO().getUserByUsername(user.getUsername()) != null) {
-                s3.deleteObject(bucketBase, image.getUuid());
+                s3.deleteObject(bucketname, image.getUuid());
                 Admin.getUserDAO().deleteImage(user, image);
             }
         }

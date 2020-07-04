@@ -22,31 +22,59 @@ import edu.au.cc.gallery.aws.Secrets;
 public class DB {
 
     private Connection connection;
+    private static String pg_host;
+    private static int pg_port;
+    private static String ig_user;
+    private static String ig_password;
+    private static String ig_database;
+
 
     private JSONObject getSecret() {
         String s = Secrets.getSecretImageGallery();
         return new JSONObject(s);
     }
 
-    private String getPassword(JSONObject secret) {
-        return secret.getString("password");
+    public static void setIg_database(String igdatabase) {
+        if (igdatabase == null || igdatabase.equals(""))
+            ig_database = "images";
+        else
+            ig_database = igdatabase;
     }
 
-    private String getHostname() {
-        String host = "";
-        try {
-            File file = new File("/home/ec2-user/.dbhostname");
-            Scanner scanner = new Scanner(file);
-            if (scanner.hasNextLine()) {
-                host = "jdbc:postgresql://" + scanner.nextLine() + "/image_gallery";
-            }
-            scanner.close();
-        }
-        catch (FileNotFoundException ex) {
-            System.out.println("[ERR]: .dbhostname file not found or is empty..." + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return host;
+    private static String getIg_database() {
+        return ig_database;
+    }
+
+    private static String getHostname() {
+        return pg_host;
+    }
+
+    public static void setHostname(String hostname) {
+        pg_host = "jdbc:postgresql://" + hostname + ":" + getPg_port() + "/" + getIg_database();
+    }
+
+    private static int getPg_port() {
+        return pg_port;
+    }
+
+    public static void setPg_port(int pgport) {
+        pg_port = pgport;
+    }
+
+    private static String getIg_user() {
+        return ig_user;
+    }
+
+    public static void setIg_user(String iguser) {
+        ig_user = iguser;
+    }
+
+    private static String getIg_password() {
+        return ig_password;
+    }
+
+    public static void setIg_password(String igpassword) {
+        ig_password = igpassword;
     }
 
     public ResultSet executeQuery(String query) throws SQLException {
@@ -76,8 +104,8 @@ public class DB {
     public void connect() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
-            JSONObject secret = getSecret();
-            connection = DriverManager.getConnection(getHostname(), "image_gallery", getPassword(secret));
+            //JSONObject secret = getSecret();
+            connection = DriverManager.getConnection(getHostname(), getIg_user(), getIg_password());
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             System.exit(1);
