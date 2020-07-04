@@ -23,10 +23,8 @@ public class DB {
 
     private Connection connection;
     private static String pg_host;
-    private static int pg_port;
     private static String ig_user;
     private static String ig_password;
-    private static String ig_database;
 
 
     private JSONObject getSecret() {
@@ -34,31 +32,12 @@ public class DB {
         return new JSONObject(s);
     }
 
-    public static void setIg_database(String igdatabase) {
-        if (igdatabase == null || igdatabase.equals(""))
-            ig_database = "images";
-        else
-            ig_database = igdatabase;
-    }
-
-    private static String getIg_database() {
-        return ig_database;
-    }
-
     private static String getHostname() {
         return pg_host;
     }
 
-    public static void setHostname(String hostname) {
-        pg_host = "jdbc:postgresql://" + hostname + ":" + getPg_port() + "/" + getIg_database();
-    }
-
-    private static int getPg_port() {
-        return pg_port;
-    }
-
-    public static void setPg_port(int pgport) {
-        pg_port = pgport;
+    public static void setHostname(String hostname, String pg_port, String ig_database) {
+        pg_host = "jdbc:postgresql://" + hostname + ":" + pg_port + "/" + ig_database;
     }
 
     private static String getIg_user() {
