@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Base64;
 import java.io.InputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 public class App {
 
@@ -46,19 +43,10 @@ public class App {
         else
             port(Integer.parseInt(portString));
 
-        if (ig_passwd_file != null || ! ig_passwd_file.equals("")) {
-            try {
-                File file = new File(ig_passwd_file);
-                Scanner scanner = new Scanner(file);
-                while (scanner.hasNextLine()) {
-                    ig_passwd = scanner.nextLine();
-                }
-            } catch (FileNotFoundException ex) {
-                System.out.println("[ERR]: " + ig_passwd_file + " not found.");
-            } catch (Exception ex) {
-                System.out.println("[ERR]: " + ex.getMessage());
-            }
+        if (ig_passwd_file != null && !ig_passwd_file.equals("")) {
+            ig_passwd = ig_passwd_file;
         }
+
         addRoutes();
         Admin.addRoutes();
     }
