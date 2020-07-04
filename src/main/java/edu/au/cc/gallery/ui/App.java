@@ -42,6 +42,11 @@ public class App {
             port(5000);
         else
             port(Integer.parseInt(portString));
+
+        if (ig_passwd_file != null && !ig_passwd_file.equals("")) {
+            ig_passwd = ig_passwd_file;
+        }
+
         addRoutes();
         Admin.addRoutes();
     }
