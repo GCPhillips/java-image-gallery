@@ -28,4 +28,19 @@ public interface UserDAO {
      * Edit a user on the database
      */
     void editUser(User u) throws Exception;
+
+    /**
+     * Add an image for a user into the database
+     */
+    void addImage(User u, Image i) throws Exception;
+
+    /**
+     * @return returns the list of all image UUIDs for a user
+     */
+    List<String> getImageUuids(User u) throws Exception;
+
+    /**
+     * Deletes an image for a user on the database
+     */
+    void deleteImage(User u, Image i) throws Exception;
 }

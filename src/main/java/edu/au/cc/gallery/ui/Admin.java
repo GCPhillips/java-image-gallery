@@ -1,6 +1,6 @@
 package edu.au.cc.gallery.ui;
 
-import edu.au.cc.gallery.data.Postgres;
+import edu.au.cc.gallery.data.PostgresFactory;
 import edu.au.cc.gallery.data.User;
 import edu.au.cc.gallery.data.UserDAO;
 import spark.Request;
@@ -13,9 +13,12 @@ import java.util.Map;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.before;
+import static spark.Spark.halt;
 
 public class Admin {
     private static final String homePage = "/admin/users";
+    private static final String adminName = "admin";
 
     public static void addRoutes() {
         get(homePage, (res, req) -> listUsers());
@@ -33,10 +36,12 @@ public class Admin {
                 (req, res) -> editUser(req.queryParams("name"), req, res));
         post("/admin/adduserform",
                 (req, res) -> addUserForm());
+        before("/admin/*",
+                (req, res) -> checkAdmin(req, res));
     }
 
     public static UserDAO getUserDAO() throws Exception {
-        return Postgres.getUserDAO();
+        return PostgresFactory.getUserDAO();
     }
 
     private static String listUsers() {
@@ -113,6 +118,17 @@ public class Admin {
         }
         catch (Exception ex) {
             return "[ERR]: " + ex.getMessage();
+        }
+    }
+
+    private static boolean isAdmin(String username) {
+        return username != null && username.equals(adminName);
+    }
+
+    private static void checkAdmin(Request req, Response res) {
+        if (!isAdmin(req.session().attribute("user"))) {
+            res.redirect("/login");
+            halt();
         }
     }
 

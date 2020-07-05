@@ -1,11 +1,16 @@
 package edu.au.cc.gallery.aws;
 
+import software.amazon.awssdk.core.Response;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 public class S3 {
@@ -28,10 +33,11 @@ public class S3 {
         client.createBucket(createBucketRequest);
     }
 
-    public void putObject(String bucketName, String key, String value) {
+    public void putObject(String bucketName, String key, String value, String contentType) {
         PutObjectRequest por = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
+                .contentType(contentType)
                 .build();
 
         client.putObject(por, RequestBody.fromString(value));
@@ -45,6 +51,22 @@ public class S3 {
                 .build();
         client.deleteObject(dor);
 
+    }
+
+    public String getObject(String bucketName, String key) {
+        GetObjectRequest gor = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        try {
+            ResponseInputStream<GetObjectResponse> response = client.getObject(gor);
+            return new String(response.readAllBytes(), "UTF-8");
+        }
+        catch (Exception ex) {
+            System.out.println("[ERR]: " + ex.getMessage());
+        }
+
+        return null;
     }
 
     public static void demo() {

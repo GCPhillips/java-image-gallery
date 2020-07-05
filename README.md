@@ -1,1 +1,1 @@
-#  Java-based image gallery
+#  Java-based imageData gallery

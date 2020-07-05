@@ -22,31 +22,38 @@ import edu.au.cc.gallery.aws.Secrets;
 public class DB {
 
     private Connection connection;
+    private static String pg_host;
+    private static String ig_user;
+    private static String ig_password;
+
 
     private JSONObject getSecret() {
         String s = Secrets.getSecretImageGallery();
         return new JSONObject(s);
     }
 
-    private String getPassword(JSONObject secret) {
-        return secret.getString("password");
+    private static String getHostname() {
+        return pg_host;
     }
 
-    private String getHostname() {
-        String host = "";
-        try {
-            File file = new File("/home/ec2-user/.dbhostname");
-            Scanner scanner = new Scanner(file);
-            if (scanner.hasNextLine()) {
-                host = "jdbc:postgresql://" + scanner.nextLine() + "/image_gallery";
-            }
-            scanner.close();
-        }
-        catch (FileNotFoundException ex) {
-            System.out.println("[ERR]: .dbhostname file not found or is empty..." + ex.getMessage());
-            ex.printStackTrace();
-        }
-        return host;
+    public static void setHostname(String hostname, String pg_port, String ig_database) {
+        pg_host = "jdbc:postgresql://" + hostname + ":" + pg_port + "/" + ig_database;
+    }
+
+    private static String getIg_user() {
+        return ig_user;
+    }
+
+    public static void setIg_user(String iguser) {
+        ig_user = iguser;
+    }
+
+    private static String getIg_password() {
+        return ig_password;
+    }
+
+    public static void setIg_password(String igpassword) {
+        ig_password = igpassword;
     }
 
     public ResultSet executeQuery(String query) throws SQLException {
@@ -76,8 +83,8 @@ public class DB {
     public void connect() throws SQLException {
         try {
             Class.forName("org.postgresql.Driver");
-            JSONObject secret = getSecret();
-            connection = DriverManager.getConnection(getHostname(), "image_gallery", getPassword(secret));
+            //JSONObject secret = getSecret();
+            connection = DriverManager.getConnection(getHostname(), getIg_user(), getIg_password());
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             System.exit(1);

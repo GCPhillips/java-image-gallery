@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Images for {{username}}</title>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+      {{#each images}}
+      <div class="image">
+        <img src="data:image/png;base64,{{imagedata}}"/>
+      </div>
+      <form action="/user/{{username}}/images/{{uuid}}" method="POST">
+        <button type="submit" name="deleteimage" value="{{uuid}}">Delete</button>
+      </form>
+      {{/each}}
+      <hr>
+      <div class="addform">
+        <form action="/user/{{username}}/images" method="POST" enctype="multipart/form-data">
+          <label for="img">Add Image:</label>
+          <input type="file" name="imagedata" accept="image/*">
+          <input type="submit">
+        </form>
+      </div>
+  </body>
+</html>
