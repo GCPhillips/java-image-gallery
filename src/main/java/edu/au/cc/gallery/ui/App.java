@@ -52,6 +52,7 @@ public class App {
     }
 
     private static void addRoutes() {
+        get("/", (req, res) -> { res.redirect("/login"); return "";});
         get("/sessionDemo", (req, res) -> sessionDemo(req, res));
         get("/debugSession", (req, res) -> debugSession(req, res));
         get("/login", (req, res) -> login(req, res));
