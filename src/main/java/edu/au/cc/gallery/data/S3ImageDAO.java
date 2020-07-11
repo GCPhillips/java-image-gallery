@@ -26,7 +26,7 @@ public class S3ImageDAO implements ImageDAO {
             }
         }
         catch (Exception ex) {
-            System.out.println("[ERR]: " + ex.getMessage());
+            System.out.println("[ERR][S3ImageDAO.getImages()]: " + ex.getMessage());
         }
 
         return images;
@@ -42,7 +42,7 @@ public class S3ImageDAO implements ImageDAO {
             return image;
         }
         catch (Exception ex) {
-            System.out.println("[ERR]: " + ex.getMessage());
+            System.out.println("[ERR][S3ImageDAO.getImage()]: " + ex.getMessage());
         }
         return null;
     }
@@ -60,7 +60,7 @@ public class S3ImageDAO implements ImageDAO {
             }
         }
         catch (Exception ex) {
-            System.out.println("[ERR]: " + ex.getMessage());
+            System.out.println("[ERR][S3ImageDAO.addImage()]: " + ex.getMessage());
         }
     }
 
@@ -77,7 +77,7 @@ public class S3ImageDAO implements ImageDAO {
             }
         }
         catch (Exception ex) {
-            System.out.println("[ERR]: " + ex.getMessage());
+            System.out.println("[ERR][S3ImageDAO.deleteImage()]: " + ex.getMessage());
         }
     }
 }

@@ -63,7 +63,7 @@ public class S3 {
             return new String(response.readAllBytes(), "UTF-8");
         }
         catch (Exception ex) {
-            System.out.println("[ERR]: " + ex.getMessage());
+            System.out.println("[ERR][S3.getObject()]: " + ex.getMessage());
         }
 
         return null;
