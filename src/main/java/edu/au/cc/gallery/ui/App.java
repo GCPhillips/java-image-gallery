@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Base64;
 import java.io.InputStream;
+import java.io.File;
+import java.util.Scanner;
 
 public class App {
 
@@ -33,19 +35,28 @@ public class App {
         String ig_passwd_file = System.getenv("IG_PASSWD_FILE");
         String s3_image_bucket = System.getenv("S3_IMAGE_BUCKET");
 
-        DB.setHostname(pg_host, pg_port, ig_database);
-        DB.setIg_password(ig_passwd);
-        DB.setIg_user(ig_user);
-        S3ImageDAO.setBucketname(s3_image_bucket);
-
         if (portString == null || portString.equals(""))
             port(5000);
         else
             port(Integer.parseInt(portString));
 
         if (ig_passwd_file != null && !ig_passwd_file.equals("")) {
-            ig_passwd = ig_passwd_file;
+            try {
+                File file = new File(ig_passwd_file);
+                Scanner scanner = new Scanner(file);
+                while (scanner.hasNextLine()) {
+                    ig_passwd = scanner.nextLine();
+                }
+            }
+            catch (Exception ex) {
+                System.out.println("[ERR][App.main()]: " + ex.getMessage());
+            }
         }
+
+        DB.setHostname(pg_host, pg_port, ig_database);
+        DB.setIg_password(ig_passwd);
+        DB.setIg_user(ig_user);
+        S3ImageDAO.setBucketname(s3_image_bucket);
 
         addRoutes();
         Admin.addRoutes();
