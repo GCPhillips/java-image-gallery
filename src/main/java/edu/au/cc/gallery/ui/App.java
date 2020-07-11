@@ -82,7 +82,7 @@ public class App {
             req.session().attribute("user", username);
             resp.redirect("/user/" + username + "/images");
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.loginPost()]: " + ex.getMessage();
         }
 
         return "";
@@ -119,7 +119,7 @@ public class App {
                 halt();
             }
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.checkUser()]: " + ex.getMessage();
         }
         return "";
     }
@@ -143,7 +143,7 @@ public class App {
             }
             return render(model, "userhome.hbs");
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.getUserHome()]: " + ex.getMessage();
         }
     }
 
@@ -159,7 +159,7 @@ public class App {
             Image image = new Image(user, uuid, imageDataString);
             getImageDAO().addImage(user, image);
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.addImage()]: " + ex.getMessage();
         }
 
         res.redirect("/user/" + username + "/images");
@@ -177,7 +177,7 @@ public class App {
             getImageDAO().deleteImage(user, image);
             res.redirect("/user/" + username + "/images");
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.deleteImage()]: " + ex.getMessage();
         }
         return "";
     }
@@ -193,7 +193,7 @@ public class App {
             Image image = getImageDAO().getImage(user, uuid);
             model.put("image", image.getImageData());
         } catch (Exception ex){
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][App.getImage()]: " + ex.getMessage();
         }
         return render(model, "singleimage.hbs");
     }

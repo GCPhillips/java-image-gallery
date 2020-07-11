@@ -59,7 +59,7 @@ public class Admin {
             model.put("users", users);
             return App.render(model, "userlist.hbs");
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.listUsers()]: " + ex.getMessage();
         }
     }
 
@@ -83,7 +83,7 @@ public class Admin {
             r.redirect(homePage);
             return "";
         } catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.addUser()]: " + ex.getMessage();
         }
     }
 
@@ -94,7 +94,7 @@ public class Admin {
             return App.render(model, "deleteuserform.hbs");
         }
         catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.deleteUserForm()]: " + ex.getMessage();
         }
     }
 
@@ -106,7 +106,7 @@ public class Admin {
             return "";
         }
         catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.deleteUser()]: " + ex.getMessage();
         }
     }
 
@@ -117,7 +117,7 @@ public class Admin {
             return App.render(model, "edituserform.hbs");
         }
         catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.editUserForm()]: " + ex.getMessage();
         }
     }
 
@@ -143,7 +143,7 @@ public class Admin {
             return "";
         }
         catch (Exception ex) {
-            return "[ERR]: " + ex.getMessage();
+            return "[ERR][Admin.editUser()]: " + ex.getMessage();
         }
     }
 }
